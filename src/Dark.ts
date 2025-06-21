@@ -9,13 +9,13 @@ let darkTheme = false;
 function switchTheme() {
   if (darkTheme) {
     document.body.classList.remove("dark");
-    document.getElementsByClassName("logo")[0].getElementsByTagName("img")[0].src = "/assets/tutel.png";
-    document.getElementsByClassName("logo")[0].getElementsByTagName("span")[0].innerText = "Vedal Bingo";
+    document.getElementsByClassName("logo")[0].getElementsByTagName("img")[0].src = "/assets/logo.webp";
+    document.getElementsByClassName("logo")[0].getElementsByTagName("span")[0].innerText = "Nwero Bingo";
     document.getElementsByClassName("theme-switcher")[0].getElementsByTagName("img")[0].src = "/assets/dark.svg";
   } else {
     document.body.classList.add("dark");
-    document.getElementsByClassName("logo")[0].getElementsByTagName("img")[0].src = "/assets/tutel.png";
-    document.getElementsByClassName("logo")[0].getElementsByTagName("span")[0].innerText = "Vedal Bingo";
+    document.getElementsByClassName("logo")[0].getElementsByTagName("img")[0].src = "/assets/logo_dark.webp";
+    document.getElementsByClassName("logo")[0].getElementsByTagName("span")[0].innerText = "Ewiv Bingo";
     document.getElementsByClassName("theme-switcher")[0].getElementsByTagName("img")[0].src = "/assets/light.svg";
   }
 
