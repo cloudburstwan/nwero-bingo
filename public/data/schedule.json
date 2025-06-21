@@ -1,12 +1,16 @@
 {
-  "2025-06-19": {
-    "name": "Evil works in fastfood Stream",
-    "description": "evil got fired and had to go work mcdonalds ):",
+  "2025-06-21": {
+    "name": "Evil and Cerber play Will You Press The Button",
+    "description": "2 creatures from hell play a button pressing game",
     "customBuckets": {
-      "evil": "streams/one_offs/evil_fastfood/evil.json"
+      "stream": "collabs/cerber_evil_button/stream.json",
+      "cerber": "collabs/cerber_evil_button/cerber.json",
+      "evil": "collabs/cerber_evil_button/evil.json"
     },
     "weights": {
-      "evil": 21,
+      "stream": 7,
+      "cerber": 7,
+      "evil": 7,
       "chat": 3
     },
     "boardWidth": 5,
