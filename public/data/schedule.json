@@ -1,16 +1,12 @@
 {
-  "2025-06-21": {
-    "name": "Evil and Cerber play Will You Press The Button",
-    "description": "2 creatures from hell play a button pressing game",
+  "2025-06-24": {
+    "name": "Neuro Stream",
+    "description": "EVIL ORIGINAL SONG TOMORROW DO NOT MISS IT",
     "customBuckets": {
-      "stream": "collabs/cerber_evil_button/stream.json",
-      "cerber": "collabs/cerber_evil_button/cerber.json",
-      "evil": "collabs/cerber_evil_button/evil.json"
+      "neuro": "streams/solo/neuro.json"
     },
     "weights": {
-      "stream": 7,
-      "cerber": 7,
-      "evil": 7,
+      "neuro": 21,
       "chat": 3
     },
     "boardWidth": 5,
