@@ -1,12 +1,12 @@
 {
-  "2025-06-24": {
-    "name": "Neuro Stream",
-    "description": "EVIL ORIGINAL SONG TOMORROW DO NOT MISS IT",
+  "2025-06-26": {
+    "name": "Evil Stream",
+    "description": "she just released her first song be kind to her",
     "customBuckets": {
-      "neuro": "streams/solo/neuro.json"
+      "evil": "streams/solo/evil.json"
     },
     "weights": {
-      "neuro": 21,
+      "evil": 21,
       "chat": 3
     },
     "boardWidth": 5,
