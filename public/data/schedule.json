@@ -1,12 +1,16 @@
 {
-  "2025-06-26": {
-    "name": "Evil Stream",
-    "description": "she just released her first song be kind to her",
+  "2025-06-28": {
+    "name": "Evil makes tier lists w/ Zentreya & Camila",
+    "description": "how will this even go",
     "customBuckets": {
-      "evil": "streams/solo/evil.json"
+      "stream": "collabs/evil_zen_camila_tier_lists/stream.json",
+      "partners": "collabs/evil_zen_camila_tier_lists/partners.json",
+      "evil": "collabs/evil_zen_camila_tier_lists/evil.json"
     },
     "weights": {
-      "evil": 21,
+      "stream": 6,
+      "partners": 7,
+      "evil": 8,
       "chat": 3
     },
     "boardWidth": 5,
@@ -15,13 +19,15 @@
     "freeSpaces": [
       {
         "pos": [2, 2],
-        "src": "/assets/artworks/soul_evil_burger.png",
+        "src": "/assets/artworks/therapy.png",
         "alt": "",
         "credit": {
-          "name": "food0606 (commissioner: soul1419)",
-          "source": "https://discord.com/channels/574720535888396288/1308995951809138688/1308995951809138688"
+          "name": "who even invented therapy",
+          "source": "https://en.wikipedia.org/wiki/History_of_psychotherapy"
         },
-        "stretch": false
+        "stretch": false,
+        "description": "therapy occurs",
+        "overrideReminder": "this will get more and more absurd"
       }
     ]
   }
