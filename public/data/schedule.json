@@ -1,16 +1,12 @@
 {
-  "2025-06-28": {
-    "name": "Evil makes tier lists w/ Zentreya & Camila",
-    "description": "how will this even go",
+  "2025-07-01": {
+    "name": "Neuro Solo",
+    "description": "Buy it.",
     "customBuckets": {
-      "stream": "collabs/evil_zen_camila_tier_lists/stream.json",
-      "partners": "collabs/evil_zen_camila_tier_lists/partners.json",
-      "evil": "collabs/evil_zen_camila_tier_lists/evil.json"
+      "neuro": "streams/solo/neuro.json"
     },
     "weights": {
-      "stream": 6,
-      "partners": 7,
-      "evil": 8,
+      "neuro": 21,
       "chat": 3
     },
     "boardWidth": 5,
