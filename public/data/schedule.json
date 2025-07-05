@@ -1,12 +1,16 @@
 {
   "2025-07-01": {
-    "name": "Neuro Solo",
-    "description": "Buy it.",
+    "name": "Twins Camping Trip",
+    "description": "twins camping but they cooked vedal soup",
     "customBuckets": {
-      "neuro": "streams/solo/neuro.json"
+      "stream": "themed/twins_camping/stream.json",
+      "neuro": "themed/twins_camping/neuro.json",
+      "evil": "themed/twins_camping/evil.json"
     },
     "weights": {
-      "neuro": 21,
+      "stream": 7,
+      "neuro": 7,
+      "evil": 7,
       "chat": 3
     },
     "boardWidth": 5,
