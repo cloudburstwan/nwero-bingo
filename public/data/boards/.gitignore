@@ -3,3 +3,6 @@
 streams/solo/neuro_v1.json
 streams/solo/evil_v1.json
 # Old Neuro + Evil prompts, replaced with v2 prompts on 2025-04-29
+
+streams/dev-v1
+# Old dev stream prompts, replaced with new ones on 2025-07-07

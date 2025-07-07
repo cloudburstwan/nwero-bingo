@@ -1,16 +1,18 @@
 {
-  "2025-07-05": {
-    "name": "Twins Camping Trip",
-    "description": "twins camping but they cooked vedal soup",
+  "2025-07-07": {
+    "name": "Dev Stream",
+    "description": "starring the vedal plushie",
     "customBuckets": {
-      "stream": "themed/twins_camping/stream.json",
-      "neuro": "themed/twins_camping/neuro.json",
-      "evil": "themed/twins_camping/evil.json"
+      "stream": "streams/dev/stream.json",
+      "updates": "streams/dev/updates.json",
+      "vedal": "streams/dev/vedal.json",
+      "twin": "streams/dev/twin.json"
     },
     "weights": {
-      "stream": 7,
-      "neuro": 7,
-      "evil": 7,
+      "stream": 6,
+      "updates": 3,
+      "vedal": 6,
+      "twin": 6,
       "chat": 3
     },
     "boardWidth": 5,
@@ -22,12 +24,12 @@
         "src": "/assets/artworks/therapy.png",
         "alt": "",
         "credit": {
-          "name": "who even invented therapy",
+          "name": "who even invented therapy? probably the twins",
           "source": "https://en.wikipedia.org/wiki/History_of_psychotherapy"
         },
         "stretch": false,
-        "description": "therapy occurs",
-        "overrideReminder": "this will get more and more absurd"
+        "description": "therapy occurs like it always does",
+        "overrideReminder": "the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end"
       }
     ]
   }

@@ -1,13 +1,15 @@
 ﻿{
-  "vedal mentions changes to neuro": "Vedal tells us about improvements, bugfixes, brainstorming, etc",
-  "vedal mentions latency": "Vedal mentions latency and how it's improved/got worse/is the same/etc",
-  "vedal insults neuro/evil": "Vedal insults Neuro or Evil at any point during the stream",
-  "vedal makes tutel/femboy noise": "Vedal makes a tutel or femboy noise",
-  "vedal is corpa": "Vedal acts corpa, either shilling for Abandoned Archive, Neuro, or generally acts in a corporate-like way",
-  "vedal says \"i don't know\"": "Vedal says \"i don't know\" during the stream",
-  "vedal complains about a stream": "Vedal complains about a previous stream",
-  "vedal has tech issues": "there are tech issues of any kind during the stream. This may be completely unrelated to Neuro or Evil or directly related to them",
-  "vedal mentions non-latency issue": "Vedal talks about any issues not pertaining to latency (think crashes, glitches, etc. SSL issues were an example when they occured)<br/><br/>If an issue is actively ongoing, the \"vedal has tech issues\" prompt is more suited and this prompt doesn't count",
-  "vedal says \"vedal out\"": "Vedal says his catchphrase, \"vedal out\"",
-  "vedal mentions sleep": "Vedal mentions the concept of sleep, not necessarily by calling it sleeping, or his sleeping schedule (or lack thereof)"
+    "vedal heavy sighs/groans": "free space",
+    "vedal says \"...look, man\"": "Vedal says \"...look, man\" exactly",
+    "vedal says \"brother\"": "Vedal says \"brother\" at any point",
+    "vedal yells at twin": "Vedal yells at a twin",
+    "vedal mentions sleep": "Vedal mentions sleep, whether it's his own sleep and his failure of a sleep schedule, or the twins sleeping",
+    "vedal mentions alcohol": "Vedal mentions alcohol / drinking alcohol at any point",
+    "vedal makes tutel/femboy noise": "Vedal makes a tutel/femboy noise",
+    "vedal is corpa": "Vedal is corpa at any point... <a href=\"https://neurosama.shop/\">buytheplushiebuytheplushiebuytheplushiebuytheplushiebuytheplushie</a>",
+    "vedal says \"i don't know\"": "Vedal says that he doesn't know",
+    "vedal says \"vedal out\"": "Obvious. Umbrella put this here, don't blame me if he doesn't do it",
+    "vedal hypes an update": "Vedal hypes up an update (such as v3 voice)",
+    "vedal says \"okay...\"": "Vedal says \"okay...\"",
+    "vedal talks about previous stream": "Vedal talks about a previous Neuro-sama or Evil stream"
 }
