@@ -1,18 +1,12 @@
 {
   "2025-07-07": {
-    "name": "Dev Stream",
-    "description": "starring the vedal plushie",
+    "name": "Neuro Stream",
+    "description": "help i'm addicted to screeps i keep forgetting to update",
     "customBuckets": {
-      "stream": "streams/dev/stream.json",
-      "updates": "streams/dev/updates.json",
-      "vedal": "streams/dev/vedal.json",
-      "twin": "streams/dev/twin.json"
+      "neuro": "streams/solo/neuro.json"
     },
     "weights": {
-      "stream": 6,
-      "updates": 3,
-      "vedal": 6,
-      "twin": 6,
+      "neuro": 21,
       "chat": 3
     },
     "boardWidth": 5,
