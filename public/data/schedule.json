@@ -1,12 +1,12 @@
 {
-  "2025-07-15": {
-    "name": "Neuro Stream",
-    "description": "what is a schedule? can i eat it?",
+  "2025-07-16": {
+    "name": "Evil Stream",
+    "description": "secretly a twin stream",
     "customBuckets": {
-      "neuro": "streams/solo/neuro.json"
+      "evil": "streams/solo/evil.json"
     },
     "weights": {
-      "neuro": 21,
+      "evil": 21,
       "chat": 3
     },
     "boardWidth": 5,
