@@ -1,12 +1,26 @@
 {
-  "2025-07-22": {
-    "name": "Neuro Stream",
-    "description": "what the fuck",
+  "2025-07-23": {
+    "name": "Evil Karaoke Stream",
+    "description": "elivJam",
     "customBuckets": {
-      "neuro": "streams/solo/neuro.json"
+      "karaoke": "streams/karaoke.json"
     },
     "weights": {
-      "neuro": 21,
+      "karaoke": 1
+    },
+    "boardWidth": 1,
+    "boardHeight": 1,
+    "multipleFreeSpacesBehaviour": "theme",
+    "freeSpaces": []
+  },
+  "2025-07-24": {
+    "name": "Evil Stream",
+    "description": "eliv",
+    "customBuckets": {
+      "evil": "streams/solo/evil.json"
+    },
+    "weights": {
+      "evil": 21,
       "chat": 3
     },
     "boardWidth": 5,
