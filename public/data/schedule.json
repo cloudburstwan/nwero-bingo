@@ -1,12 +1,16 @@
 {
-  "2025-07-22": {
-    "name": "Neuro Stream",
-    "description": "what the fuck",
+  "2025-07-28": {
+    "name": "Dev Stream",
+    "description": "with added juniper",
     "customBuckets": {
-      "neuro": "streams/solo/neuro.json"
+      "stream": "streams/one_offs/dev_juniper/stream.json",
+      "neuro": "streams/one_offs/dev_juniper/neuro.json",
+      "vedal": "streams/dev/vedal.json"
     },
     "weights": {
-      "neuro": 21,
+      "stream": 7,
+      "neuro": 7,
+      "vedal": 7,
       "chat": 3
     },
     "boardWidth": 5,
