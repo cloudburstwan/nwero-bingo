@@ -1,16 +1,12 @@
 {
-  "2025-07-28": {
-    "name": "Dev Stream",
-    "description": "with added juniper",
+  "2025-07-29": {
+    "name": "Neuro Stream",
+    "description": "nwero the cat girl",
     "customBuckets": {
-      "stream": "streams/one_offs/dev_juniper/stream.json",
-      "neuro": "streams/one_offs/dev_juniper/neuro.json",
-      "vedal": "streams/dev/vedal.json"
+      "neuro": "streams/solo/neuro.json"
     },
     "weights": {
-      "stream": 7,
-      "neuro": 7,
-      "vedal": 7,
+      "neuro": 21,
       "chat": 3
     },
     "boardWidth": 5,
