@@ -1,13 +1,16 @@
 {
-  "2025-08-05": {
-    "name": "Neuro Stream",
-    "description": "nwero the cat girl",
+  "2025-08-10": {
+    "name": "Rimworld with Koko and Evil",
+    "description": "sachii was meant to remind me to configure this",
     "customBuckets": {
-      "neuro": "streams/solo/neuro.json"
+      "stream": "collabs/rimworld_koko_evil/stream.json",
+      "koko": "collabs/rimworld_koko_evil/koko.json",
+      "evil": "collabs/rimworld_koko_evil/evil.json"
     },
     "weights": {
-      "neuro": 21,
-      "chat": 3
+      "stream": 9,
+      "koko": 7,
+      "evil": 8
     },
     "boardWidth": 5,
     "boardHeight": 5,
