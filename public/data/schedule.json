@@ -1,16 +1,41 @@
 {
-  "2025-08-10": {
-    "name": "Rimworld with Koko and Evil",
-    "description": "sachii was meant to remind me to configure this",
+  "2025-08-12": {
+    "name": "Neuro Stream",
+    "description": "remembered myself this time",
     "customBuckets": {
-      "stream": "collabs/rimworld_koko_evil/stream.json",
-      "koko": "collabs/rimworld_koko_evil/koko.json",
-      "evil": "collabs/rimworld_koko_evil/evil.json"
+      "neuro": "streams/solo/neuro.json"
     },
     "weights": {
-      "stream": 9,
-      "koko": 7,
-      "evil": 8
+      "neuro": 21,
+      "chat": 3
+    },
+    "boardWidth": 5,
+    "boardHeight": 5,
+    "multipleFreeSpacesBehaviour": "theme",
+    "freeSpaces": [
+      {
+        "pos": [2, 2],
+        "src": "/assets/artworks/therapy.png",
+        "alt": "",
+        "credit": {
+          "name": "who even invented therapy? probably the twins",
+          "source": "https://en.wikipedia.org/wiki/History_of_psychotherapy"
+        },
+        "stretch": false,
+        "description": "therapy occurs like it always does",
+        "overrideReminder": "the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end is never the end"
+      }
+    ]
+  },
+  "2025-08-14": {
+    "name": "Evil Stream",
+    "description": "did this one in advance",
+    "customBuckets": {
+      "evil": "streams/solo/evil.json"
+    },
+    "weights": {
+      "evil": 21,
+      "chat": 3
     },
     "boardWidth": 5,
     "boardHeight": 5,
