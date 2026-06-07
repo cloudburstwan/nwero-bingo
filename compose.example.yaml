@@ -1,0 +1,41 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    networks:
+      - default
+    depends_on:
+      - backend
+  admin:
+    build: ./admin
+    hostname: admin
+    networks:
+      - default
+    depends_on:
+      - frontend
+      - backend
+  backend:
+    build: ./backend
+    hostname: backend
+    networks:
+      - default
+    environment:
+      idkyet:
+    depends_on:
+      - db
+  db:
+    image: ./configs/postgres
+    environment:
+      POSTGRES_PASSWORD: nwero
+      POSTGRES_USER: nwero
+      POSTGRES_DB: bingo
+    volumes:
+      - postgres:/var/lib/postgresql
+
+networks:
+  default:
+    internal: true
+
+volumes:
+  postgres:
