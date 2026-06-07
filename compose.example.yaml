@@ -22,6 +22,8 @@ services:
       - default
     environment:
       idkyet:
+    volumes:
+      - ./backend/data/:/bin/backend/data/
     depends_on:
       - db
   db:

@@ -15,11 +15,11 @@ RUN go build -o /app ./src
 
 FROM alpine:3.21 AS final
 
-RUN mkdir /bin/neuro-schedule-api
-COPY --from=builder /app /bin/neuro-schedule-api/app
+RUN mkdir /bin/app
+COPY --from=builder /app /bin/backend/app
 
 EXPOSE 80
 
-WORKDIR /bin/neuro-schedule-api
+WORKDIR /bin/backend
 
 CMD ["./app"]
