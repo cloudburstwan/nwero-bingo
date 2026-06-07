@@ -1,9 +1,0 @@
-{
-  "location in uk": "the location the flag appears is in the United Kingdom",
-  "location in california": "the location the flag appears is in California, United States",
-  "flag in photo": "a flag is visible in the photo",
-  "dog in photo": "a dog is visible in the photo",
-  "close guess": "either DougDoug or Neuro's guess is within 100km (62mi) of the marker",
-  "dead on guess": "either DougDoug or Neuro's guess is within 25m (82ft) of the marker",
-  "sign with location name": "a sign is visible in the photo which says the actual location name"
-}
