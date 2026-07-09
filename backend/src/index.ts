@@ -25,7 +25,6 @@ api.use((req, res, next) => {
   next();
 });
 
-// TODO: API endpoints
 api.use("/cards", CardsAPI(database, sessions));
 api.use("/buckets", BucketsAPI(database, sessions));
 api.use("/free-spaces", FreeSpacesAPI(database, sessions));
