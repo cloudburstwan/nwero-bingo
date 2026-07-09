@@ -9,6 +9,7 @@ import Artwork from "./types/Artwork";
 import { randomUUID } from "node:crypto";
 import User from "./types/User";
 import History, { HistoryAction } from "./types/History";
+import { readdirSync, readFileSync } from "node:fs";
 
 export default class Database {
   private pool: Pool = new Pool({
@@ -21,9 +22,39 @@ export default class Database {
 
   constructor() {
     this.pool.connect().then(async (client) => {
-      await client.query(`SET timezone = 'UTC';`);
-      let recentMigration = await this.getMostRecentMigration();
-      console.log(`Connected to database. Most recent migration: ${recentMigration?.name ?? "none"}`);
+      if (this.pool.totalCount <= 1) {
+        let recentMigration = await this.getMostRecentMigration();
+        console.log(`Connected to database. Most recent migration: ${recentMigration?.name ?? "none"}`);
+
+        let appliedMigrations = await this.getMigrations();
+        let allMigrations = readdirSync("/postgres/").filter(file => file.endsWith(".sql"));
+        let unappliedMigrations = allMigrations.filter(fileName => {
+          let migrationName = fileName.split(".")[1];
+          return !appliedMigrations.some(migration => migration.name === migrationName);
+        });
+
+        if (unappliedMigrations.length > 0) {
+          console.log(`Found ${unappliedMigrations.length} unapplied migrations. Applying in order...`);
+          let sortedMigrations = unappliedMigrations.sort((a, b) => {
+            let migrationDateA = parseInt(a.split(".")[0]);
+            let migrationDateB = parseInt(b.split(".")[0]);
+
+            if (isNaN(migrationDateA) && isNaN(migrationDateB)) return 0;
+            if (isNaN(migrationDateA)) return 1;
+            if (isNaN(migrationDateB)) return -1;
+
+            return migrationDateA - migrationDateB;
+          });
+
+          for (let migration of sortedMigrations) {
+            let migrationName = migration.split(".")[1];
+            console.log(`Applying migration ${migrationName} (created ${migration.split(".")[0]})...`);
+            let migrationQuery = readFileSync(`/postgres/${migration}`, "utf8");
+            await this.pool.query(migrationQuery);
+            await this.addMigration(migrationName);
+          }
+        }
+      }
     });
   }
 
