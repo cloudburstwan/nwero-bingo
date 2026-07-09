@@ -61,8 +61,6 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Create card (requires session)
-
   api.put("/", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("name", req.body.name, "string");
