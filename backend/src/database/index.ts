@@ -9,7 +9,7 @@ import Artwork from "./types/Artwork";
 import { randomUUID } from "node:crypto";
 import User from "./types/User";
 import History, { HistoryAction } from "./types/History";
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 
 export default class Database {
   private pool: Pool = new Pool({
@@ -374,6 +374,8 @@ export default class Database {
         stretch: freeSpace.stretch
       });
     }
+
+    writeFileSync(`/archived-cards/${exportData.id}.json`, JSON.stringify(exportData, null, 2));
 
     await this.deleteCard(card);
     return await this.createArchivedCard(exportData.id, exportData.name, exportData.date);
