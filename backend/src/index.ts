@@ -8,7 +8,7 @@ import { ArtworksAPI } from "./routes/Artworks";
 import { SessionsAPI } from "./routes/Sessions";
 import { HistoryAPI } from "./routes/History";
 import { UsersAPI } from "./routes/Users";
-import APIError from "./types/Error";
+import APIError from "./types/APIError";
 import crypto from "crypto";
 import { TemplatesCardsAPI } from "./routes/templates/Cards";
 import { TemplatesBucketsAPI } from "./routes/templates/Buckets";

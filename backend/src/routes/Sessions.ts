@@ -1,7 +1,7 @@
 import express from "express";
 import Database from "../database";
 import Sessions from "../sessions";
-import APIError from "../types/Error";
+import APIError from "../types/APIError";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 
