@@ -3,6 +3,8 @@ import Database from "../database";
 import Sessions from "../sessions";
 import APIError from "../types/APIError";
 import Card from "../database/types/Card";
+import requireSessionMiddleware from "../utils/RequireSessionMiddleware";
+import { batchCheckType } from "../utils/checkType";
 
 export function CardsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -60,6 +62,30 @@ export function CardsAPI(database: Database, sessions: Sessions) {
   })
 
   // TODO: Create card (requires session)
+
+  api.put("/", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("name", req.body.name, "string");
+    checkType("description", req.body.description, "string", true);
+    checkType("date", req.body.date, "date");
+    checkType("width", req.body.width, "number");
+    checkType("height", req.body.height, "number");
+    completeBatch();
+
+    let card: Card = await database.createCard(req.body.name, req.body.description, req.body.date, req.body.width, req.body.height);
+    res.status(200).json({
+      id: card.id,
+      name: card.name,
+      description: card.description,
+      date: card.date,
+      width: card.width,
+      height: card.height,
+      createdAt: card.createdAt,
+      updatedAt: card.updatedAt,
+      buckets: [],
+      freeSpaces: [],
+    });
+  });
 
   // TODO: Update card (requires session)
 
