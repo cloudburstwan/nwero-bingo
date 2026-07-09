@@ -5,6 +5,10 @@ services:
       - "80:80"
     networks:
       - default
+    volumes:
+      - archived-cards:/usr/share/nginx/html/archived-cards/
+      - avatars:/usr/share/nginx/html/avatars/
+      - artworks:/usr/share/nginx/html/artworks/
     depends_on:
       - backend
       - admin # We depend on admin here because NGINX will throw a fit if it's not available
@@ -16,12 +20,20 @@ services:
     depends_on:
       - backend
   backend:
-    build: ./backend
+    build: backend
     hostname: backend
     networks:
       - default
     environment:
-      idkyet:
+      DB_USER: nwero
+      DB_PASSWORD: nwero
+      DB_NAME: bingo
+      DB_HOST: db
+      DB_PORT: 5432
+      ERROR_STACK_ENCRYPTION_KEY:
+      DISCORD_APPLICATION_ID:
+      DISCORD_APPLICATION_SECRET:
+      DISCORD_REDIRECT_URI: https://bingo.nwero.net/
     volumes:
       - ./backend/data/:/bin/backend/data/
     depends_on:
@@ -32,6 +44,8 @@ services:
       POSTGRES_PASSWORD: nwero
       POSTGRES_USER: nwero
       POSTGRES_DB: bingo
+    networks:
+      - default
     volumes:
       - postgres:/var/lib/postgresql
 
@@ -41,3 +55,6 @@ networks:
 
 volumes:
   postgres:
+  archived-cards:
+  artworks:
+  avatars:

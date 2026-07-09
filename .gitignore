@@ -27,3 +27,7 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+backend-go
+compose.yaml
+test-data

@@ -1,25 +1,36 @@
-FROM golang:1.26-alpine AS builder
+FROM node:26-alpine AS base
+MAINTAINER Cloudburst
+WORKDIR /usr/src/app
 
-ENV CGO_ENABLED=0 \
-    GOOS=linux \
-    GOARCH=amd64
+FROM base AS installer
 
-WORKDIR /build
+RUN mkdir -p /temp/development
+RUN mkdir -p /temp/production
 
-COPY go.mod go.sum ./
+COPY package.json package-lock.json /temp/development/
+COPY package.json package-lock.json /temp/production/
 
-RUN go mod download
+WORKDIR /temp/development
+RUN npm install --save-dev
 
-COPY . .
-RUN go build -o /app ./src
+WORKDIR /temp/production
+RUN npm install
 
-FROM alpine:3.21 AS final
+FROM base AS builder
 
-RUN mkdir /bin/app
-COPY --from=builder /app /bin/backend/app
+COPY --from=installer /temp/development/node_modules node_modules
+COPY ./src src
+COPY ./tsconfig.json .
 
-EXPOSE 80
+RUN npm install -g typescript
 
-WORKDIR /bin/backend
+RUN tsc
 
-CMD ["./app"]
+FROM base AS release
+ENV NODE_ENV="production"
+
+COPY --from=installer /temp/production/node_modules node_modules
+COPY --from=builder /usr/src/app/dist .
+COPY ./data /data
+
+ENTRYPOINT ["node", "index.js"]
