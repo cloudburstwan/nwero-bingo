@@ -9,7 +9,7 @@ export function TemplatesFreeSpacesAPI(database: Database, sessions: Sessions) {
 
   api.get("/:id", requireSessionMiddleware(sessions), async (req, res) => {
     try {
-      let freeSpace = await database.templates.getFreeSpace(req.params.id);
+      let freeSpace = await database.templates.getFreeSpace(req.params.id as string);
       let artwork = await freeSpace.getArtwork()
       res.status(200).json({
         id: freeSpace.id,
