@@ -35,6 +35,8 @@ export function batchCheckType() {
      */
     checkType: (key: string, value: any | undefined | null, type: string, canBeUndefinedOrNull: boolean = false) => {
       if (canBeUndefinedOrNull && (value === undefined || value === null)) return;
+      else if (value === undefined) return addMismatch(key, value, type, "undefined");
+      else if (value === null) return addMismatch(key, value, type, "null");
 
       // Custom handling for date types, as invalid dates are not caught by the constructor check
       if (type.toLowerCase() === "date" && isNaN(Date.parse(value)))
