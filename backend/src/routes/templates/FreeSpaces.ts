@@ -2,20 +2,12 @@ import express from "express";
 import Database from "../../database";
 import Sessions from "../../sessions";
 import APIError from "../../types/APIError";
+import requireSessionMiddleware from "../../utils/RequireSessionMiddleware";
 
 export function TemplatesFreeSpacesAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
 
-  api.get("/:id", async (req, res) => {
-    if (req.header("Authorization") === undefined)
-      throw new APIError(401, "UNAUTHORIZED", "You must have an active session to access this endpoint.");
-
-    if (!req.header("Authorization")?.startsWith("Bearer "))
-      throw new APIError(400, "BAD_AUTHORIZATION_HEADER_FORMAT", "Authentication headers must start with 'Bearer'.");
-
-    if (!sessions.validate(req.header("Authorization")))
-      throw new APIError(401, "UNAUTHORIZED", "You must have an active session to access this endpoint.");
-
+  api.get("/:id", requireSessionMiddleware(sessions), async (req, res) => {
     try {
       let freeSpace = await database.templates.getFreeSpace(req.params.id);
       let artwork = await freeSpace.getArtwork()
