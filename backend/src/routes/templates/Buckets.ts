@@ -7,7 +7,15 @@ import requireSessionMiddleware from "../../utils/RequireSessionMiddleware";
 export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
 
-  // TODO: List standalone buckets
+  api.get("/", express.urlencoded({ extended: true }), requireSessionMiddleware(sessions), async (req, res) => {
+    let limit = parseInt(req.query.limit as string || "20");
+    if (isNaN(limit)) limit = 20;
+    let offset = parseInt(req.query.offset as string || "0");
+    if (isNaN(offset)) offset = 0;
+
+    let buckets = await database.templates.getBucketList(limit, offset);
+    res.status(200).json(buckets);
+  })
 
   api.get("/:id", requireSessionMiddleware(sessions), async (req, res) => {
     try {
