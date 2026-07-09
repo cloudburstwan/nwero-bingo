@@ -47,6 +47,7 @@ services:
     networks:
       - default
     volumes:
+      - ./postgres/00000000.db-init.sql:/docker-entrypoint-initdb.d/00000000.db-init.sql
       - postgres:/var/lib/postgresql
 
 networks:
