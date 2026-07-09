@@ -157,6 +157,6 @@ CREATE TABLE IF NOT EXISTS "history" (
     );
 
 INSERT INTO "migrations" ("name") VALUES ('db-init');
-INSERT INTO "users" ("id", "username", "avatar_url", "discord_id") VALUES ('00000000-0000-0000-0000-000000000000', 'System', '/admin/system-avatar.png', '000000000000000000');
+INSERT INTO "users" ("id", "username", "avatar_url", "avatar_hash", "discord_id") VALUES ('00000000-0000-0000-0000-000000000000', 'System', '/admin/system-avatar.png', NULL, '000000000000000000');
 INSERT INTO "history" ("id", "user_id", "table", "action", "primary_key", "data") VALUES ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000', 'users', 1, '00000000-0000-0000-0000-000000000000', '{"username":"System","avatar_url":"/admin/system-avatar.png","discord_id":"000000000000000000"}');
 INSERT INTO "history" ("id", "user_id", "table", "action", "primary_key", "data") VALUES ('00000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000000', 'migrations', 1, 'db-init', '{}');
