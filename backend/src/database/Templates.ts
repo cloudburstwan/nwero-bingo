@@ -36,8 +36,8 @@ export default class TemplatesDatabase {
    * @param offset Offset of the buckets to return.
    */
   public async getBucketList(limit: number = 20, offset: number = 0): Promise<{ id: string, name: string }[]> {
-    const query = `SELECT id, name FROM templates_buckets WHERE standalone = true ORDER BY name DESC`;
-    const result = await this.pool.query(query);
+    const query = `SELECT id, name FROM templates_buckets WHERE standalone = true ORDER BY name DESC LIMIT $1 OFFSET $2`;
+    const result = await this.pool.query(query, [limit, offset]);
 
     let output = [];
     for (const row of result.rows) {
