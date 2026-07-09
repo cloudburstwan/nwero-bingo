@@ -11,7 +11,6 @@ export function SessionsAPI(database: Database, sessions: Sessions) {
 
   // TODO: Get session (requires authentication)
 
-  // TODO: OAuth2 flow
   api.get("/create", express.urlencoded({ extended: true }), async (req, res) => {
     let code = req.query.code as string;
     if (!code)

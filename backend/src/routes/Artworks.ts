@@ -17,7 +17,6 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     res.status(200).json(artworks);
   });
 
-  // TODO: Get artwork (requires session)
   api.get("/:id", express.urlencoded({ extended: true }), requireSessionMiddleware(sessions), async (req, res) => {
     try {
       let artwork = await database.getArtwork(req.params.id as string);
@@ -29,9 +28,9 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     }
   });
 
-  // TODO: Create artwork (requires session)
+  // TODO: Create artwork (requires session) - Will require file upload handling
 
-  // TODO: Update artwork (requires session)
+  // TODO: Update artwork (requires session) - Will require file upload handling
 
   // TODO: Delete artwork (requires session)
 
