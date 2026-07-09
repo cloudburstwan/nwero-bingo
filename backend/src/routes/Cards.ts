@@ -5,6 +5,8 @@ import APIError from "../types/APIError";
 import Card from "../database/types/Card";
 import requireSessionMiddleware from "../utils/RequireSessionMiddleware";
 import { batchCheckType } from "../utils/checkType";
+import { writeFileSync } from "node:fs";
+import { arch } from "node:os";
 
 export function CardsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -14,7 +16,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     if (isNaN(limit)) limit = 20;
     let offset = parseInt(req.query.offset as string || "0");
     if (isNaN(offset)) offset = 0;
-    let shouldBypassFilterCheck = req.query.showUpcomingCards ? sessions.validate(req.header("Authorization")) : false;
+    let shouldBypassFilterCheck = typeof req.query.showUpcomingCards === "string" ? sessions.validate(req.header("Authorization")) : false;
 
     let cards = await database.getCardList(limit, offset);
     res.status(200).json(cards.filter(card => shouldBypassFilterCheck || card.date < new Date()));
@@ -125,9 +127,25 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Delete card (requires session)
+  api.delete("/:id", express.urlencoded({ extended: true }), requireSessionMiddleware(sessions), async (req, res) => {
+    let shouldArchive = typeof req.query.archive === "string";
 
-  // TODO: Archive card (requires session)
+    try {
+      let card = await database.getCard(req.params.id as string);
+      if (shouldArchive) {
+        let archivedCard = await database.archiveCard(card);
+
+        res.status(200).json({ link: `${process.env.DISCORD_REDIRECT_URI as string}/archived-cards/${archivedCard.id}.json` });
+      } else {
+        await database.deleteCard(card);
+        res.status(204).send();
+      }
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "CARD_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
+      else throw err;
+    }
+  });
 
   return api;
 }
