@@ -329,6 +329,57 @@ export default class Database {
   }
 
   /**
+   * Archives the card and all of its buckets and free spaces.
+   * @param card Card to archive.
+   * @returns The archived card.
+   * @throws ReferenceError If a referenced bucket or free space does not exist.
+   */
+  public async archiveCard(card: Card): Promise<ArchivedCard> {
+    let exportData: any = {
+      id: card.id,
+      name: card.name,
+      description: card.description,
+      date: card.date,
+      width: card.width,
+      height: card.height,
+      buckets: [],
+      freeSpaces: []
+    };
+
+    let bucketIds = await card.getBucketIds();
+    for (let bucketId of bucketIds) {
+      let bucket = await this.getBucket(bucketId);
+      exportData.buckets.push({
+        id: bucket.id,
+        name: bucket.name,
+        weight: bucket.weight,
+        prompts: (await bucket.getPrompts())
+      });
+    }
+
+    let freeSpaceIds = await card.getFreeSpaceIds();
+    for (let freeSpaceId of freeSpaceIds) {
+      let freeSpace = await this.getFreeSpace(freeSpaceId);
+      let artwork = freeSpace.artworkId ? (await freeSpace.getArtwork()) : null;
+      exportData.freeSpaces.push({
+        id: freeSpace.id,
+        artwork: artwork ? {
+          id: artwork.id,
+          src: artwork.src,
+          sourceName: artwork.sourceName,
+          sourceUrl: artwork.sourceUrl,
+        } : null,
+        x: freeSpace.x,
+        y: freeSpace.y,
+        stretch: freeSpace.stretch
+      });
+    }
+
+    await this.deleteCard(card);
+    return await this.createArchivedCard(exportData.id, exportData.name, exportData.date);
+  }
+
+  /**
    * Gets a list of archived cards in the database.
    * @param limit Limit of the number of archived cards to return.
    * @param offset Offset of the archived cards to return.
@@ -358,6 +409,15 @@ export default class Database {
     if (result.rowCount === 0) throw new ReferenceError(`Archived card with id ${id} does not exist`);
 
     return new ArchivedCard(result.rows[0].id, result.rows[0].name, new Date(result.rows[0].date), new Date(result.rows[0].archived_at));
+  }
+
+  public async createArchivedCard(id: string, name: string, date: Date): Promise<ArchivedCard> {
+    const archivedCard = new ArchivedCard(id, name, date, new Date());
+
+    const query = `INSERT INTO archived_cards (id, name, date, archived_at) VALUES ($1, $2, $3, $4)`;
+    await this.pool.query(query, [archivedCard.id, archivedCard.name, archivedCard.date, archivedCard.archivedAt]);
+
+    return archivedCard;
   }
 
   /**
