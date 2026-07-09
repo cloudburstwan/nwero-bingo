@@ -18,6 +18,16 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
   });
 
   // TODO: Get artwork (requires session)
+  api.get("/:id", express.urlencoded({ extended: true }), requireSessionMiddleware(sessions), async (req, res) => {
+    try {
+      let artwork = await database.getArtwork(req.params.id as string);
+      res.status(200).json(artwork);
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ARTWORK_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
+      else throw err;
+    }
+  });
 
   // TODO: Create artwork (requires session)
 
