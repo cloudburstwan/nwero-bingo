@@ -85,7 +85,45 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     });
   });
 
-  // TODO: Update card (requires session)
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("name", req.body.name, "string", true);
+    checkType("description", req.body.description, "string", true);
+    checkType("date", req.body.date, "date", true);
+    checkType("width", req.body.width, "number", true);
+    checkType("height", req.body.height, "number", true);
+    completeBatch();
+
+    try {
+      let card = await database.getCard(req.params.id as string);
+
+      let updatedRawData: Card = Object.assign(card, req.body);
+
+      card.name = updatedRawData.name;
+      card.description = updatedRawData.description;
+      card.date = new Date(updatedRawData.date);
+      card.width = updatedRawData.width;
+      card.height = updatedRawData.height;
+
+      let updatedCard: Card = await database.updateCard(card);
+      res.status(200).json({
+        id: updatedCard.id,
+        name: updatedCard.name,
+        description: updatedCard.description,
+        date: updatedCard.date,
+        width: updatedCard.width,
+        height: updatedCard.height,
+        createdAt: updatedCard.createdAt,
+        updatedAt: updatedCard.updatedAt,
+        buckets: await updatedCard.getBucketIds(),
+        freeSpaces: await updatedCard.getFreeSpaceIds(),
+      });
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "CARD_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
+      else throw err;
+    }
+  })
 
   // TODO: Delete card (requires session)
 
