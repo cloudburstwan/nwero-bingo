@@ -599,18 +599,19 @@ export default class Database {
 
   /**
    * Creates a new artwork in the database.
+   * @param id ID of the artwork.
    * @param src Image source of the artwork.
    * @param sourceName Name of the artist of the artwork.
    * @param sourceUrl URL of the artist of the artwork.
    * @param uploader ID of the user who uploaded the artwork.
    * @returns The created artwork.
    */
-  public async createArtwork(src: string, sourceName: string, sourceUrl: string | undefined, uploader: string): Promise<Artwork> {
+  public async createArtwork(id: string, src: string, sourceName: string, sourceUrl: string | undefined, uploader: string): Promise<Artwork> {
     const query = `INSERT INTO artworks (id, src, source_name, source_url, uploader, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $6)`;
-    await this.pool.query(query, [randomUUID(), src, sourceName, sourceUrl, uploader, new Date()]);
+    await this.pool.query(query, [id, src, sourceName, sourceUrl, uploader, new Date()]);
 
     return {
-      id: randomUUID(),
+      id: id,
       src: src,
       sourceName: sourceName,
       sourceUrl: sourceUrl,
