@@ -89,7 +89,21 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Delete artwork (requires session)
+  api.delete("/:id", requireSessionMiddleware(sessions), async (req, res) => {
+    try {
+      let artwork = await database.getArtwork(req.params.id as string);
+      await database.deleteArtwork(artwork);
+
+      if (artwork.src.startsWith("/artworks/"))
+        rmSync(artwork.src);
+
+      res.status(204).send();
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ARTWORK_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
+      else throw err;
+    }
+  })
 
   return api;
 }
