@@ -22,7 +22,7 @@ export default class Bucket {
 
     let output = [];
     for (const row of result.rows) {
-      output.push(new Prompt(row.id, row.bucket_id, row.prompt, row.description));
+      output.push({ id: row.id, bucketId: row.bucket_id, prompt: row.prompt, description: row.description });
     }
 
     return output;
