@@ -54,7 +54,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
           res.redirect(archivedCard.getUrl());
         } catch (err) {
           if (err instanceof ReferenceError)
-            throw new APIError(404, "CARD_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
+            throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
           else throw err;
         }
       }
@@ -149,7 +149,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
       });
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "CARD_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
       else throw err;
     }
   })
@@ -174,7 +174,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
       }
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "CARD_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
       else throw err;
     }
   });

@@ -102,7 +102,7 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
       res.status(200).json(updatedArtwork);
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "ARTWORK_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
       else throw err;
     }
   })
@@ -120,7 +120,7 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
       res.status(204).send();
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "ARTWORK_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
       else throw err;
     }
   })

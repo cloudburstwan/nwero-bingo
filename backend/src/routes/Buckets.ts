@@ -26,7 +26,7 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
       });
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "BUCKET_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
       else throw err;
     }
   });
@@ -62,7 +62,7 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
       });
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "CARD_NOT_FOUND", `Could not find a card with the id ${req.body.cardId}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.body.cardId}.`);
       else throw err;
     }
   });
@@ -105,7 +105,7 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
       });
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "BUCKET_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
       else throw err;
     }
   })
@@ -122,7 +122,7 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
       res.status(204).send();
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "BUCKET_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
       else throw err;
     }
   });
