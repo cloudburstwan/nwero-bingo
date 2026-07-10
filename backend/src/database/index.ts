@@ -462,7 +462,7 @@ export default class Database {
    * @returns The updated bucket.
    */
   public async updateBucket(bucket: Bucket): Promise<Bucket> {
-    const query = `UPDATE buckets SET name = $1, weight = $2 WHERE id = $4`;
+    const query = `UPDATE buckets SET name = $1, weight = $2 WHERE id = $3`;
     await this.pool.query(query, [bucket.name, bucket.weight, bucket.id]);
 
     let card = await this.getCard(bucket.cardId);
