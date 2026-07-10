@@ -110,7 +110,6 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Delete bucket (requires session)
   api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     try {
       let bucket = await database.getBucket(req.params.id as string);
