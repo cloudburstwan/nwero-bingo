@@ -34,7 +34,6 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     }
   });
 
-  // TODO: Create free space (requires session)
   api.put("/", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("cardId", req.body.cardId, "string");
