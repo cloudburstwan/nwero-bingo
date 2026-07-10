@@ -603,7 +603,7 @@ export default class Database {
    * @returns The updated free space.
    */
   public async updateFreeSpace(freeSpace: FreeSpace): Promise<FreeSpace> {
-    const query = `UPDATE free_spaces SET artwork_id = $2, x = $3, y = $4, stretch = $5 WHERE id = $6`;
+    const query = `UPDATE free_spaces SET artwork_id = $1, x = $2, y = $3, stretch = $4 WHERE id = $5`;
     await this.pool.query(query, [freeSpace.artworkId, freeSpace.x, freeSpace.y, freeSpace.stretch, freeSpace.id]);
 
     let card = await this.getCard(freeSpace.cardId);
