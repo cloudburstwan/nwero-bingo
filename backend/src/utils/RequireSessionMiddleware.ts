@@ -1,9 +1,10 @@
 import Sessions from "../sessions";
 import express from "express";
 import APIError from "../types/APIError";
+import Session from "../sessions/Session";
 
 export default function requireSessionMiddleware(sessions: Sessions) {
-  return (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  return (req: RequestWithSession, res: express.Response, next: express.NextFunction) => {
     if (req.header("Authorization") === undefined)
       throw new APIError(401, "UNAUTHORIZED", "You must have an active session to access this endpoint.");
 
@@ -13,6 +14,11 @@ export default function requireSessionMiddleware(sessions: Sessions) {
     if (!sessions.validate(req.header("Authorization")))
       throw new APIError(401, "UNAUTHORIZED", "You must have an active session to access this endpoint.");
 
+    let sessionId = req.header("Authorization")!.replace("Bearer ", "");
+    req.session = sessions.get(sessionId)!;
+
     next();
   }
 }
+
+export type RequestWithSession = express.Request & { session?: Session }
