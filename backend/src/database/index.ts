@@ -157,7 +157,7 @@ export default class Database {
       createdAt: new Date(),
     }
 
-    const query = `INSERT INTO history (id, user_id, table, action, primary_key, data, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+    const query = `INSERT INTO history (id, user_id, "table", action, primary_key, data, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     await this.pool.query(query, [history.id, history.userId, history.table, history.action, history.primaryKey, history.data, history.createdAt]);
 
     return history;
