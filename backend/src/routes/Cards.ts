@@ -3,10 +3,9 @@ import Database from "../database";
 import Sessions from "../sessions";
 import APIError from "../types/APIError";
 import Card from "../database/types/Card";
-import requireSessionMiddleware from "../utils/RequireSessionMiddleware";
+import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
 import { batchCheckType } from "../utils/checkType";
-import { writeFileSync } from "node:fs";
-import { arch } from "node:os";
+import { HistoryAction } from "../database/types/History";
 
 export function CardsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -63,7 +62,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  api.put("/", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
+  api.put("/", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("name", req.body.name, "string");
     checkType("description", req.body.description, "string", true);
@@ -73,6 +72,16 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     completeBatch();
 
     let card: Card = await database.createCard(req.body.name, req.body.description, req.body.date, req.body.width, req.body.height);
+
+    await database.addHistory(req.session!.userId, "card", HistoryAction.CREATE, card.id,
+      {
+        name: card.name,
+        description: card.description,
+        date: card.date,
+        width: card.width,
+        height: card.height,
+      });
+
     res.status(200).json({
       id: card.id,
       name: card.name,
@@ -87,7 +96,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     });
   });
 
-  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("name", req.body.name, "string", true);
     checkType("description", req.body.description, "string", true);
@@ -108,6 +117,24 @@ export function CardsAPI(database: Database, sessions: Sessions) {
       card.height = updatedRawData.height;
 
       let updatedCard: Card = await database.updateCard(card);
+
+      await database.addHistory(req.session!.userId, "card", HistoryAction.UPDATE, card.id, {
+        before: {
+          name: card.name,
+          description: card.description,
+          date: card.date,
+          width: card.width,
+          height: card.height,
+        },
+        after: {
+          name: updatedCard.name,
+          description: updatedCard.description,
+          date: updatedCard.date,
+          width: updatedCard.width,
+          height: updatedCard.height,
+        }
+      });
+
       res.status(200).json({
         id: updatedCard.id,
         name: updatedCard.name,
@@ -127,7 +154,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  api.delete("/:id", express.urlencoded({ extended: true }), requireSessionMiddleware(sessions), async (req, res) => {
+  api.delete("/:id", express.urlencoded({ extended: true }), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let shouldArchive = typeof req.query.archive === "string";
 
     try {
@@ -135,9 +162,14 @@ export function CardsAPI(database: Database, sessions: Sessions) {
       if (shouldArchive) {
         let archivedCard = await database.archiveCard(card);
 
+        await database.addHistory(req.session!.userId, "card", HistoryAction.ARCHIVE, card.id, null);
+
         res.status(200).json({ link: `${process.env.DISCORD_REDIRECT_URI as string}/archived-cards/${archivedCard.id}.json` });
       } else {
         await database.deleteCard(card);
+
+        await database.addHistory(req.session!.userId, "card", HistoryAction.DELETE, card.id, null);
+
         res.status(204).send();
       }
     } catch (err) {

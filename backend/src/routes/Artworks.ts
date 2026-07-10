@@ -2,15 +2,15 @@ import express from "express";
 import Database from "../database";
 import Sessions from "../sessions";
 import APIError from "../types/APIError";
-import requireSessionMiddleware from "../utils/RequireSessionMiddleware";
+import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
 import formData from "express-form-data";
 import { batchCheckType } from "../utils/checkType";
 import * as os from "node:os";
 import { mkdirSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
-import Card from "../database/types/Card";
 import Artwork from "../database/types/Artwork";
+import { HistoryAction } from "../database/types/History";
 
 export function ArtworksAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -48,9 +48,6 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     checkType("sourceUrl", req.body.sourceUrl, "string", true);
     completeBatch();
 
-    let sessionId = req.header("Authorization")!.replace("Bearer ", "");
-    let session = sessions.get(sessionId)!;
-
     if (!req.files?.file?.type.startsWith("image/"))
       throw new APIError(400, "INVALID_FILE_TYPE", "Only image files are allowed.");
 
@@ -61,12 +58,19 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
       .resize(300, null)
       .toFile(`/artworks/${fileName}`);
 
-    let artwork = await database.createArtwork(id, `/artworks/${fileName}`, req.body.sourceName, req.body.sourceUrl, session.userId);
+    let artwork = await database.createArtwork(id, `/artworks/${fileName}`, req.body.sourceName, req.body.sourceUrl, req.session!.userId);
+
+    await database.addHistory(req.session!.userId, "artworks", HistoryAction.CREATE, artwork.id,
+      {
+        sourceName: artwork.sourceName,
+        sourceUrl: artwork.sourceUrl,
+        src: artwork.src,
+      });
 
     res.status(200).json(artwork);
   });
 
-  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("sourceName", req.body.sourceName, "string", true);
     checkType("sourceUrl", req.body.sourceUrl, "string", true);
@@ -81,6 +85,20 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
       artwork.sourceUrl = updatedRawData.sourceUrl;
 
       let updatedArtwork: Artwork = await database.updateArtwork(artwork);
+
+      await database.addHistory(req.session!.userId, "artworks", HistoryAction.UPDATE, artwork.id, {
+        before: {
+          sourceName: artwork.sourceName,
+          sourceUrl: artwork.sourceUrl,
+          src: artwork.src,
+        },
+        after: {
+          sourceName: updatedArtwork.sourceName,
+          sourceUrl: updatedArtwork.sourceUrl,
+          src: updatedArtwork.src,
+        },
+      });
+
       res.status(200).json(updatedArtwork);
     } catch (err) {
       if (err instanceof ReferenceError)
@@ -89,10 +107,12 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  api.delete("/:id", requireSessionMiddleware(sessions), async (req, res) => {
+  api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     try {
       let artwork = await database.getArtwork(req.params.id as string);
       await database.deleteArtwork(artwork);
+
+      await database.addHistory(req.session!.userId, "artworks", HistoryAction.DELETE, artwork.id, null);
 
       if (artwork.src.startsWith("/artworks/"))
         rmSync(artwork.src);
@@ -108,7 +128,7 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
   return api;
 }
 
-type RequestWithFiles = express.Request & { files?: { [key: string]: File } };
+type RequestWithFiles = RequestWithSession & { files?: { [key: string]: File } };
 
 interface File {
   fieldName: string,
