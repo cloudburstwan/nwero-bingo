@@ -7,6 +7,7 @@ import { batchCheckType } from "../utils/checkType";
 import Artwork from "../database/types/Artwork";
 import Card from "../database/types/Card";
 import { HistoryAction } from "../database/types/History";
+import FreeSpace from "../database/types/FreeSpace";
 
 export function FreeSpacesAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -83,6 +84,57 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
   });
 
   // TODO: Update free space (requires session)
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("artworkId", req.body.artworkId, "string", true);
+    checkType("x", req.body.x, "number", true);
+    checkType("y", req.body.y, "number", true);
+    checkType("stretch", req.body.stretch, "boolean", true);
+    completeBatch();
+
+    try {
+      let freeSpace = await database.getFreeSpace(req.params.id as string);
+
+      let updatedRawData: FreeSpace = Object.assign(freeSpace, req.body);
+
+      freeSpace.artworkId = updatedRawData.artworkId;
+      freeSpace.x = updatedRawData.x;
+      freeSpace.y = updatedRawData.y;
+      freeSpace.stretch = updatedRawData.stretch;
+
+      await database.updateFreeSpace(freeSpace);
+
+      await database.addHistory(req.session!.userId, "free_spaces", HistoryAction.UPDATE, freeSpace.id, {
+        before: {
+          cardId: freeSpace.cardId,
+          artworkId: freeSpace.artworkId,
+          x: freeSpace.x,
+          y: freeSpace.y,
+          stretch: freeSpace.stretch
+        },
+        after: {
+          cardId: freeSpace.cardId,
+          artworkId: updatedRawData.artworkId,
+          x: updatedRawData.x,
+          y: updatedRawData.y,
+          stretch: updatedRawData.stretch
+        }
+      });
+
+      res.status(200).json({
+        id: freeSpace.id,
+        cardId: freeSpace.cardId,
+        artworkId: freeSpace.artworkId,
+        x: freeSpace.x,
+        y: freeSpace.y,
+        stretch: freeSpace.stretch
+      });
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a free space with the id ${req.params.id}.`);
+      else throw err;
+    }
+  })
 
   // TODO: Delete free space (requires session)
 
