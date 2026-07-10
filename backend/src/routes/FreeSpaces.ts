@@ -135,7 +135,18 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Delete free space (requires session)
+  api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    try {
+      let freeSpace = await database.getFreeSpace(req.params.id as string);
+      await database.deleteFreeSpace(freeSpace);
+      await database.addHistory(req.session!.userId, "free_spaces", HistoryAction.DELETE, freeSpace.id, null);
+      res.status(204).send();
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a free space with the id ${req.params.id}.`);
+      else throw err;
+    }
+  });
 
   return api;
 }
