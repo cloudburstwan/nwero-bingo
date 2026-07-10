@@ -46,6 +46,18 @@ api.get("/health", (req, res) => {
 });
 
 api.use(async (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  if (err instanceof SyntaxError &&
+      err.stack?.includes("node_modules/body-parser/lib/types/")) {
+    let error = new APIError(400, "INVALID_JSON", "The request body was not valid JSON.");
+    error.addExplanation({
+      fromParser: err.message
+    });
+    throw error;
+  }
+  next(err);
+});
+
+api.use(async (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.log("aaa");
   if (err instanceof APIError) {
     res.status(err.httpCode).json({
