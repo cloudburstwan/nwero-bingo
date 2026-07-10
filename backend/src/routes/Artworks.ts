@@ -6,9 +6,11 @@ import requireSessionMiddleware from "../utils/RequireSessionMiddleware";
 import formData from "express-form-data";
 import { batchCheckType } from "../utils/checkType";
 import * as os from "node:os";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
+import Card from "../database/types/Card";
+import Artwork from "../database/types/Artwork";
 
 export function ArtworksAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -64,7 +66,28 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     res.status(200).json(artwork);
   });
 
-  // TODO: Update artwork (requires session) - Will require file upload handling
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("sourceName", req.body.sourceName, "string", true);
+    checkType("sourceUrl", req.body.sourceUrl, "string", true);
+    completeBatch();
+
+    try {
+      let artwork = await database.getArtwork(req.params.id as string);
+
+      let updatedRawData: Artwork = Object.assign(artwork, req.body);
+
+      artwork.sourceName = updatedRawData.sourceName;
+      artwork.sourceUrl = updatedRawData.sourceUrl;
+
+      let updatedArtwork: Artwork = await database.updateArtwork(artwork);
+      res.status(200).json(updatedArtwork);
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ARTWORK_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);
+      else throw err;
+    }
+  })
 
   // TODO: Delete artwork (requires session)
 
