@@ -2,6 +2,11 @@ import express from "express";
 import Database from "../database";
 import Sessions from "../sessions";
 import APIError from "../types/APIError";
+import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
+import { batchCheckType } from "../utils/checkType";
+import Artwork from "../database/types/Artwork";
+import Card from "../database/types/Card";
+import { HistoryAction } from "../database/types/History";
 
 export function FreeSpacesAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -30,6 +35,53 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
   });
 
   // TODO: Create free space (requires session)
+  api.put("/", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("cardId", req.body.cardId, "string");
+    checkType("artworkId", req.body.artworkId, "string", true);
+    checkType("x", req.body.x, "number");
+    checkType("y", req.body.y, "number");
+    checkType("stretch", req.body.stretch, "boolean");
+    completeBatch();
+
+    let card: Card | null = null;
+    try {
+      card = await database.getCard(req.body.cardId);
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.body.cardId}.`);
+      else throw err;
+    }
+
+    let artwork: Artwork | null = null;
+    try {
+      artwork = await database.getArtwork(req.body.artworkId);
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.body.artworkId}.`);
+      else throw err;
+    }
+
+    let freeSpace = await database.createFreeSpace(card.id, artwork.id, req.body.x, req.body.y, req.body.stretch);
+
+    await database.addHistory(req.session!.userId, "free_spaces", HistoryAction.CREATE, freeSpace.id,
+      {
+        cardId: freeSpace.cardId,
+        artworkId: freeSpace.artworkId,
+        x: freeSpace.x,
+        y: freeSpace.y,
+        stretch: freeSpace.stretch
+      });
+
+    res.status(200).json({
+      id: freeSpace.id,
+      cardId: freeSpace.cardId,
+      artworkId: freeSpace.artworkId,
+      x: freeSpace.x,
+      y: freeSpace.y,
+      stretch: freeSpace.stretch
+    });
+  });
 
   // TODO: Update free space (requires session)
 
