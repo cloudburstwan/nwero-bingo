@@ -4,6 +4,7 @@ import Sessions from "../sessions";
 import APIError from "../types/APIError";
 import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
 import { batchCheckType } from "../utils/checkType";
+import Bucket from "../database/types/Bucket";
 
 export function BucketsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -58,7 +59,34 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
     }
   });
 
-  // TODO: Update bucket (requires session)
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("name", req.body.name, "string", true);
+    checkType("weight", req.body.weight, "number", true);
+    completeBatch();
+
+    try {
+      let bucket = await database.getBucket(req.params.id as string);
+
+      let updatedRawData: Bucket = Object.assign(bucket, req.body);
+
+      bucket.name = updatedRawData.name;
+      bucket.weight = updatedRawData.weight;
+
+      await database.updateBucket(bucket);
+      res.status(200).json({
+        id: bucket.id,
+        name: bucket.name,
+        cardId: bucket.cardId,
+        weight: bucket.weight,
+        prompts: await bucket.getPrompts(),
+      });
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "BUCKET_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
+      else throw err;
+    }
+  })
 
   // TODO: Delete bucket (requires session)
 
