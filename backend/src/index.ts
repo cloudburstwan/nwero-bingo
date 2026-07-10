@@ -13,6 +13,7 @@ import crypto from "crypto";
 import { TemplatesCardsAPI } from "./routes/templates/Cards";
 import { TemplatesBucketsAPI } from "./routes/templates/Buckets";
 import { TemplatesFreeSpacesAPI } from "./routes/templates/FreeSpaces";
+import { PromptsAPI } from "./routes/Prompts";
 
 const api = express();
 const database = new Database();
@@ -27,6 +28,7 @@ api.use((req, res, next) => {
 
 api.use("/cards", CardsAPI(database, sessions));
 api.use("/buckets", BucketsAPI(database, sessions));
+api.use("/prompts", PromptsAPI(database, sessions));
 api.use("/free-spaces", FreeSpacesAPI(database, sessions));
 api.use("/artworks", ArtworksAPI(database, sessions));
 api.use("/sessions", SessionsAPI(database, sessions));
