@@ -10,6 +10,7 @@ import { randomUUID } from "node:crypto";
 import User from "./types/User";
 import History, { HistoryAction } from "./types/History";
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import Prompt from "./types/Prompt";
 
 export default class Database {
   private pool: Pool = new Pool({
@@ -482,6 +483,80 @@ export default class Database {
     const query2 = `DELETE FROM prompts WHERE bucket_id = $1`;
     await this.pool.query(query2, [bucket.id]);
 
+    let card = await this.getCard(bucket.cardId);
+    await this.updateCard(card);
+  }
+
+  /**
+   * Gets a prompt by its ID.
+   * @param id ID of the prompt to get.
+   * @returns The prompt with the given ID.
+   * @throws ReferenceError If the prompt does not exist.
+   */
+  public async getPrompt(id: string): Promise<Prompt> {
+    const query = `SELECT * FROM prompts WHERE id = $1 LIMIT 1`;
+    const result = await this.pool.query(query, [id]);
+
+    if (result.rowCount === 0) throw new ReferenceError(`Prompt with id ${id} does not exist`);
+
+    return {
+      id: result.rows[0].id,
+      bucketId: result.rows[0].bucket_id,
+      prompt: result.rows[0].prompt,
+      description: result.rows[0].description,
+    }
+  }
+
+  /**
+   * Creates a new prompt in the database.
+   * @param name Name of the prompt.
+   * @param bucketId ID of the bucket this prompt belongs to.
+   * @param description Description of the prompt.
+   * @returns The created prompt.
+   */
+  public async createPrompt(name: string, bucketId: string, description?: string) {
+    let prompt = {
+      id: randomUUID(),
+      bucketId: bucketId,
+      prompt: name,
+      description: description,
+    }
+
+    const query = `INSERT INTO prompts (id, bucket_id, prompt, description) VALUES ($1, $2, $3, $4)`;
+    await this.pool.query(query, [prompt.id, prompt.bucketId, prompt.prompt, prompt.description]);
+
+    let bucket = await this.getBucket(prompt.bucketId);
+    let card = await this.getCard(bucket.cardId);
+    await this.updateCard(card);
+
+    return prompt;
+  }
+
+  /**
+   * Updates a prompt in the database.
+   * @param prompt Prompt to update.
+   * @returns The updated prompt.
+   */
+  public async updatePrompt(prompt: Prompt): Promise<Prompt> {
+    const query = `UPDATE prompts SET prompt = $1, description = $2 WHERE id = $3`;
+    await this.pool.query(query, [prompt.prompt, prompt.description, prompt.id]);
+
+    let bucket = await this.getBucket(prompt.bucketId);
+    let card = await this.getCard(bucket.cardId);
+    await this.updateCard(card);
+
+    return prompt;
+  }
+
+  /**
+   * Deletes a prompt from the database.
+   * @param prompt
+   */
+  public async deletePrompt(prompt: Prompt): Promise<void> {
+    const query = `DELETE FROM prompts WHERE id = $1`;
+    await this.pool.query(query, [prompt.id]);
+
+    let bucket = await this.getBucket(prompt.bucketId);
     let card = await this.getCard(bucket.cardId);
     await this.updateCard(card);
   }
