@@ -5,6 +5,7 @@ import APIError from "../types/APIError";
 import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
 import { batchCheckType } from "../utils/checkType";
 import Bucket from "../database/types/Bucket";
+import { HistoryAction } from "../database/types/History";
 
 export function BucketsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -45,6 +46,13 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
 
       let bucket = await database.createBucket(req.body.name, card.id, req.body.weight);
 
+      await database.addHistory(req.session!.userId, "buckets", HistoryAction.CREATE, bucket.id,
+        {
+          name: bucket.name,
+          cardId: bucket.cardId,
+          weight: bucket.weight,
+        });
+
       res.status(200).json({
         id: bucket.id,
         name: bucket.name,
@@ -74,6 +82,20 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
       bucket.weight = updatedRawData.weight;
 
       await database.updateBucket(bucket);
+
+      await database.addHistory(req.session!.userId, "buckets", HistoryAction.UPDATE, bucket.id, {
+        before: {
+          name: bucket.name,
+          cardId: bucket.cardId,
+          weight: bucket.weight,
+        },
+        after: {
+          name: updatedRawData.name,
+          cardId: updatedRawData.cardId,
+          weight: updatedRawData.weight,
+        }
+      })
+
       res.status(200).json({
         id: bucket.id,
         name: bucket.name,
@@ -92,7 +114,11 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
   api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     try {
       let bucket = await database.getBucket(req.params.id as string);
+
       await database.deleteBucket(bucket);
+
+      await database.addHistory(req.session!.userId, "buckets", HistoryAction.DELETE, bucket.id, null);
+
       res.status(204).send();
     } catch (err) {
       if (err instanceof ReferenceError)
