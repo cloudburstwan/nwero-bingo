@@ -83,7 +83,6 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     });
   });
 
-  // TODO: Update free space (requires session)
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("artworkId", req.body.artworkId, "string", true);
