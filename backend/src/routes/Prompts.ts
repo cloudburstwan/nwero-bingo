@@ -76,6 +76,17 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
   })
 
   // TODO: Delete prompt (requires authentication)
+  api.delete("/:id", requireSessionMiddleware(sessions), async (req, res) => {
+    try {
+      let prompt = await database.getPrompt(req.params.id as string);
+      await database.deletePrompt(prompt);
+      res.status(204).send();
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a prompt with the id ${req.params.id}.`);
+      else throw err;
+    }
+  })
 
   return api;
 }
