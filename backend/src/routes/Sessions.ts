@@ -4,12 +4,15 @@ import Sessions from "../sessions";
 import APIError from "../types/APIError";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
+import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
 
 export function SessionsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
   const authorizedUsers = JSON.parse(readFileSync("/data/authorized_users.json", "utf8"));
 
-  // TODO: Get session (requires authentication)
+  api.get("/@me", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    res.status(200).json(req.session!);
+  });
 
   api.get("/create", express.urlencoded({ extended: true }), async (req, res) => {
     let code = req.query.code as string;
