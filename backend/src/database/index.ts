@@ -509,27 +509,27 @@ export default class Database {
 
   /**
    * Creates a new prompt in the database.
-   * @param name Name of the prompt.
    * @param bucketId ID of the bucket this prompt belongs to.
+   * @param prompt Name of the prompt.
    * @param description Description of the prompt.
    * @returns The created prompt.
    */
-  public async createPrompt(name: string, bucketId: string, description?: string) {
-    let prompt = {
+  public async createPrompt(bucketId: string, prompt: string, description?: string) {
+    let entity = {
       id: randomUUID(),
       bucketId: bucketId,
-      prompt: name,
+      prompt: prompt,
       description: description,
     }
 
     const query = `INSERT INTO prompts (id, bucket_id, prompt, description) VALUES ($1, $2, $3, $4)`;
-    await this.pool.query(query, [prompt.id, prompt.bucketId, prompt.prompt, prompt.description]);
+    await this.pool.query(query, [entity.id, entity.bucketId, entity.prompt, entity.description]);
 
-    let bucket = await this.getBucket(prompt.bucketId);
+    let bucket = await this.getBucket(entity.bucketId);
     let card = await this.getCard(bucket.cardId);
     await this.updateCard(card);
 
-    return prompt;
+    return entity;
   }
 
   /**
