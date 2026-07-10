@@ -96,7 +96,6 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Delete prompt (requires authentication)
   api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     try {
       let prompt = await database.getPrompt(req.params.id as string);
