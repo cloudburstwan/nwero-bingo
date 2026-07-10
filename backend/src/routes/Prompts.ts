@@ -7,7 +7,6 @@ import APIError from "../types/APIError";
 export function PromptsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
 
-  // TODO: Get prompt by ID (requires authentication)
   api.get(`/:id`, requireSessionMiddleware(sessions), async (req, res) => {
     try {
       let prompt = await database.getPrompt(req.params.id as string);
