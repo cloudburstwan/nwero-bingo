@@ -44,25 +44,23 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     checkType("stretch", req.body.stretch, "boolean");
     completeBatch();
 
-    let card: Card | null = null;
     try {
-      card = await database.getCard(req.body.cardId);
+      await database.getCard(req.body.cardId);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.body.cardId}.`);
       else throw err;
     }
 
-    let artwork: Artwork | null = null;
     try {
-      artwork = await database.getArtwork(req.body.artworkId);
+      await database.getArtwork(req.body.artworkId);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.body.artworkId}.`);
       else throw err;
     }
 
-    let freeSpace = await database.createFreeSpace(card.id, artwork.id, req.body.x, req.body.y, req.body.stretch);
+    let freeSpace = await database.createFreeSpace(req.body.cardId, req.body.artworkId, req.body.x, req.body.y, req.body.stretch);
 
     await database.addHistory(req.session!.userId, "free_spaces", HistoryAction.CREATE, freeSpace.id,
       {
@@ -90,6 +88,14 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     checkType("y", req.body.y, "number", { canBeUndefined: true });
     checkType("stretch", req.body.stretch, "boolean", { canBeUndefined: true });
     completeBatch();
+
+    try {
+      await database.getArtwork(req.body.artworkId);
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.body.artworkId}.`);
+      else throw err;
+    }
 
     try {
       let freeSpace = await database.getFreeSpace(req.params.id as string);

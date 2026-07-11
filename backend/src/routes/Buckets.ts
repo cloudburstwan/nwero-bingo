@@ -42,29 +42,29 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
       throw new APIError(400, "INVALID_WEIGHT", "Weight must be between 0 (exclusive) and 1 (inclusive).");
 
     try {
-      let card = await database.getCard(req.body.cardId);
-
-      let bucket = await database.createBucket(req.body.name, card.id, req.body.weight);
-
-      await database.addHistory(req.session!.userId, "buckets", HistoryAction.CREATE, bucket.id,
-        {
-          name: bucket.name,
-          cardId: bucket.cardId,
-          weight: bucket.weight,
-        });
-
-      res.status(200).json({
-        id: bucket.id,
-        name: bucket.name,
-        cardId: bucket.cardId,
-        weight: bucket.weight,
-        prompts: [],
-      });
+      await database.getCard(req.body.cardId);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.body.cardId}.`);
       else throw err;
     }
+
+    let bucket = await database.createBucket(req.body.name, req.body.cardId, req.body.weight);
+
+    await database.addHistory(req.session!.userId, "buckets", HistoryAction.CREATE, bucket.id,
+      {
+        name: bucket.name,
+        cardId: bucket.cardId,
+        weight: bucket.weight,
+      });
+
+    res.status(200).json({
+      id: bucket.id,
+      name: bucket.name,
+      cardId: bucket.cardId,
+      weight: bucket.weight,
+      prompts: [],
+    });
   });
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {

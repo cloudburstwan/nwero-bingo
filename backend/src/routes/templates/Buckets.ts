@@ -65,36 +65,36 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
     try {
       if (req.body.cardId !== null)
         await database.templates.getCard(req.body.cardId);
-
-      let bucket: TemplateBucket;
-      if (req.body.standalone)
-        bucket = await database.templates.createStandaloneBucket(req.body.name, req.body.weight);
-      else
-        bucket = await database.templates.createBucket(req.body.name, req.body.cardId, req.body.weight);
-
-      await database.addHistory(req.session!.userId, "templates_buckets", HistoryAction.CREATE, bucket.id,
-        {
-          name: bucket.name,
-          cardId: bucket.cardId,
-          weight: bucket.weight,
-          standalone: bucket.standalone,
-        });
-
-      res.status(200).json({
-        id: bucket.id,
-        name: bucket.name,
-        cardId: bucket.cardId,
-        weight: bucket.weight,
-        standalone: bucket.standalone,
-        prompts: [],
-        createdAt: bucket.createdAt,
-        updatedAt: bucket.updatedAt,
-      });
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card template with the id ${req.body.cardId}.`);
       else throw err;
     }
+
+    let bucket: TemplateBucket;
+    if (req.body.standalone)
+      bucket = await database.templates.createStandaloneBucket(req.body.name, req.body.weight);
+    else
+      bucket = await database.templates.createBucket(req.body.name, req.body.cardId, req.body.weight);
+
+    await database.addHistory(req.session!.userId, "templates_buckets", HistoryAction.CREATE, bucket.id,
+      {
+        name: bucket.name,
+        cardId: bucket.cardId,
+        weight: bucket.weight,
+        standalone: bucket.standalone,
+      });
+
+    res.status(200).json({
+      id: bucket.id,
+      name: bucket.name,
+      cardId: bucket.cardId,
+      weight: bucket.weight,
+      standalone: bucket.standalone,
+      prompts: [],
+      createdAt: bucket.createdAt,
+      updatedAt: bucket.updatedAt,
+    });
   });
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {

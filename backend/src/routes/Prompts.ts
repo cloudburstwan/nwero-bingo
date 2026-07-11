@@ -34,25 +34,27 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
     completeBatch();
 
     try {
-      let prompt = await database.createPrompt(req.body.bucketId, req.body.prompt, req.body.description);
-
-      await database.addHistory(req.session!.userId, "prompts", HistoryAction.CREATE, prompt.id, {
-        bucketId: prompt.bucketId,
-        prompt: prompt.prompt,
-        description: prompt.description,
-      });
-
-      res.status(200).json({
-        id: prompt.id,
-        bucketId: prompt.bucketId,
-        prompt: prompt.prompt,
-        description: prompt.description,
-      });
+      await database.getBucket(req.body.bucketId);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a bucket with the id ${req.body.bucketId}.`);
       else throw err;
     }
+
+    let prompt = await database.createPrompt(req.body.bucketId, req.body.prompt, req.body.description);
+
+    await database.addHistory(req.session!.userId, "prompts", HistoryAction.CREATE, prompt.id, {
+      bucketId: prompt.bucketId,
+      prompt: prompt.prompt,
+      description: prompt.description,
+    });
+
+    res.status(200).json({
+      id: prompt.id,
+      bucketId: prompt.bucketId,
+      prompt: prompt.prompt,
+      description: prompt.description,
+    });
   })
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
