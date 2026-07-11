@@ -88,7 +88,40 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
     }
   });
 
-  // TODO: Update bucket (requires session)
+  api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("name", req.body.name, "string", { canBeUndefined: true });
+    checkType("weight", req.body.weight, "number", { canBeUndefined: true });
+    completeBatch();
+
+    if (req.body.weight !== undefined && (req.body.weight <= 0 || req.body.weight > 1))
+      throw new APIError(400, "INVALID_WEIGHT", "Weight must be between 0 (exclusive) and 1 (inclusive).");
+
+    try {
+      let bucket = await database.templates.getBucket(req.params.id as string);
+      let updatedRawData: TemplateBucket = Object.assign(bucket, req.body);
+
+      bucket.name = updatedRawData.name;
+      bucket.weight = updatedRawData.weight;
+
+      await database.templates.updateBucket(bucket);
+
+      res.status(200).json({
+        id: bucket.id,
+        name: bucket.name,
+        cardId: bucket.cardId,
+        weight: bucket.weight,
+        standalone: bucket.standalone,
+        prompts: await bucket.getPrompts(),
+        createdAt: bucket.createdAt,
+        updatedAt: bucket.updatedAt,
+      });
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a bucket template with the id ${req.params.id}.`);
+      else throw err;
+    }
+  });
 
   // TODO: Delete bucket (requires session)
 
