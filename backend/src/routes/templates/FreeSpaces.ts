@@ -25,7 +25,7 @@ export function TemplatesFreeSpacesAPI(database: Database, sessions: Sessions) {
       });
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "FREE_SPACE_NOT_FOUND", `Could not find a free space with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a free space with the id ${req.params.id}.`);
       else throw err;
     }
   });

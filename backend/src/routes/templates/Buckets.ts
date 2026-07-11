@@ -33,7 +33,7 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
       });
     } catch (err) {
       if (err instanceof ReferenceError)
-        throw new APIError(404, "BUCKET_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a bucket with the id ${req.params.id}.`);
       else throw err;
     }
   });
