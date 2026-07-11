@@ -54,7 +54,5 @@ export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
 
   // TODO: Delete card (requires session)
 
-  // TODO: Archive card (requires session)
-
   return api;
 }
