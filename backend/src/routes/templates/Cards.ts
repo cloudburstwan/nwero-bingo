@@ -2,7 +2,9 @@ import express from "express";
 import Database from "../../database";
 import Sessions from "../../sessions";
 import APIError from "../../types/APIError";
-import requireSessionMiddleware from "../../utils/RequireSessionMiddleware";
+import requireSessionMiddleware, { RequestWithSession } from "../../utils/RequireSessionMiddleware";
+import { batchCheckType } from "../../utils/checkType";
+import { HistoryAction } from "../../database/types/History";
 
 export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -30,6 +32,7 @@ export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
 
     try {
       let card = await database.templates.getCard(req.params.id);
+
       res.status(200).json({
         id: card.id,
         name: card.name,
@@ -48,7 +51,33 @@ export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
     }
   })
 
-  // TODO: Create card (requires session)
+  api.put("/", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    let { checkType, completeBatch } = batchCheckType();
+    checkType("name", req.body.name, "string");
+    checkType("description", req.body.description, "string", { canBeNull: true });
+    checkType("width", req.body.width, "number");
+    checkType("height", req.body.height, "number");
+    completeBatch();
+
+    let card = await database.templates.createCard(req.body.name, req.body.description, req.body.width, req.body.height);
+
+    await database.addHistory(req.session!.userId, "templates_cards", HistoryAction.CREATE, card.id, {
+      name: card.name,
+      description: card.description,
+      width: card.width,
+      height: card.height,
+    });
+
+    res.status(200).json({
+      id: card.id,
+      name: card.name,
+      description: card.description,
+      width: card.width,
+      height: card.height,
+      createdAt: card.createdAt,
+      updatedAt: card.updatedAt,
+    });
+  });
 
   // TODO: Update card (requires session)
 
