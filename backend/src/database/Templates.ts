@@ -172,12 +172,13 @@ export default class TemplatesDatabase {
    * @returns The updated bucket.
    */
   public async updateBucket(bucket: TemplateBucket): Promise<TemplateBucket> {
-    const query = `UPDATE templates_buckets SET name = $1, weight = $2 WHERE id = $4`;
+    const query = `UPDATE templates_buckets SET name = $1, weight = $2 WHERE id = $3`;
     await this.pool.query(query, [bucket.name, bucket.weight, bucket.id]);
 
     if (bucket.standalone) {
       const query = `UPDATE templates_buckets SET updated_at = $1 WHERE id = $2`;
-      await this.pool.query(query, [new Date(), bucket.id]);
+      bucket.updatedAt = new Date();
+      await this.pool.query(query, [bucket.updatedAt, bucket.id]);
     } else {
       let card = await this.getCard(bucket.cardId!);
       await this.updateCard(card);
