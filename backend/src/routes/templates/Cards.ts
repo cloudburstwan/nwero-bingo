@@ -14,7 +14,6 @@ export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
     if (isNaN(limit)) limit = 20;
     let offset = parseInt(req.query.offset as string || "0");
     if (isNaN(offset)) offset = 0;
-    let shouldBypassFilterCheck = req.query.showUpcomingCards ? sessions.validate(req.header("Authorization")) : false;
 
     let cards = await database.templates.getCardList(limit, offset);
     res.status(200).json(cards);

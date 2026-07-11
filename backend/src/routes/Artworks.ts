@@ -84,7 +84,7 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
       artwork.sourceName = updatedRawData.sourceName;
       artwork.sourceUrl = updatedRawData.sourceUrl;
 
-      let updatedArtwork: Artwork = await database.updateArtwork(artwork);
+      await database.updateArtwork(artwork);
 
       await database.addHistory(req.session!.userId, "artworks", HistoryAction.UPDATE, artwork.id, {
         before: {
