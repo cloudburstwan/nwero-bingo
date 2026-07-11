@@ -38,7 +38,7 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
   api.put("/", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("cardId", req.body.cardId, "string");
-    checkType("artworkId", req.body.artworkId, "string", true);
+    checkType("artworkId", req.body.artworkId, "string", { canBeNull: true });
     checkType("x", req.body.x, "number");
     checkType("y", req.body.y, "number");
     checkType("stretch", req.body.stretch, "boolean");
@@ -85,10 +85,10 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
-    checkType("artworkId", req.body.artworkId, "string", true);
-    checkType("x", req.body.x, "number", true);
-    checkType("y", req.body.y, "number", true);
-    checkType("stretch", req.body.stretch, "boolean", true);
+    checkType("artworkId", req.body.artworkId, "string", { canBeUndefined: true, canBeNull: true });
+    checkType("x", req.body.x, "number", { canBeUndefined: true });
+    checkType("y", req.body.y, "number", { canBeUndefined: true });
+    checkType("stretch", req.body.stretch, "boolean", { canBeUndefined: true });
     completeBatch();
 
     try {

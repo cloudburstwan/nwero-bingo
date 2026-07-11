@@ -28,15 +28,17 @@ export function batchCheckType() {
      * Checks if the value's type matches the expected type.
      * Does not throw an error if the value is undefined or null and canBeUndefinedOrNull is true.
      * This function does **not** throw until `completeBatch` is called.
-     * @param key
-     * @param value
-     * @param type
-     * @param canBeUndefinedOrNull
+     * @param key The key of the value being checked. Used for error messages.
+     * @param value The value being checked.
+     * @param type The expected type of the value.
+     * @param options Options for the check.
      */
-    checkType: (key: string, value: any | undefined | null, type: string, canBeUndefinedOrNull: boolean = false) => {
-      if (canBeUndefinedOrNull && (value === undefined || value === null)) return;
-      else if (value === undefined) return addMismatch(key, value, type, "undefined");
-      else if (value === null) return addMismatch(key, value, type, "null");
+    checkType: (key: string, value: any | undefined | null, type: string, options: CheckTypeOptions = defaultCheckTypeOptions) => {
+      options = Object.assign(defaultCheckTypeOptions, options);
+      if (options.canBeUndefined && value === undefined) return;
+      if (options.canBeNull && value === null) return;
+      if (value === undefined) return addMismatch(key, value, type, "undefined");
+      if (value === null) return addMismatch(key, value, type, "null");
 
       // Custom handling for date types, as invalid dates are not caught by the constructor check
       if (type.toLowerCase() === "date" && isNaN(Date.parse(value)))
@@ -80,6 +82,16 @@ export function checkType(key: string, value: any, type: string) {
     });
     throw error;
   }
+}
+
+const defaultCheckTypeOptions: CheckTypeOptions = {
+  canBeUndefined: false,
+  canBeNull: false,
+};
+
+export interface CheckTypeOptions {
+  canBeUndefined?: boolean;
+  canBeNull?: boolean;
 }
 
 function capitaliseFirstLetter(string: string) { return string.charAt(0).toUpperCase() + string.slice(1); }

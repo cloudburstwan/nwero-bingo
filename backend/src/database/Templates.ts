@@ -54,7 +54,7 @@ export default class TemplatesDatabase {
    * @throws ReferenceError If the card does not exist.
    */
   public async getCard(id: string): Promise<TemplateCard> {
-    const query = `SELECT * FROM templates_cards LIMIT 1 WHERE id = $1`;
+    const query = `SELECT * FROM templates_cards WHERE id = $1 LIMIT 1`;
     const result = await this.pool.query(query, [id]);
 
     if (result.rowCount === 0) throw new ReferenceError(`Card with id ${id} does not exist`);
@@ -124,7 +124,7 @@ export default class TemplatesDatabase {
    * @throws ReferenceError If the bucket does not exist.
    */
   public async getBucket(id: string): Promise<TemplateBucket> {
-    const query = `SELECT * FROM templates_buckets LIMIT 1 WHERE id = $1`;
+    const query = `SELECT * FROM templates_buckets WHERE id = $1 LIMIT 1`;
     const result = await this.pool.query(query, [id]);
 
     if (result.rowCount === 0) throw new ReferenceError(`Bucket with id ${id} does not exist`);
@@ -210,7 +210,7 @@ export default class TemplatesDatabase {
    * @throws ReferenceError If the free space does not exist.
    */
   public async getFreeSpace(id: string): Promise<FreeSpace> {
-    const query = `SELECT * FROM templates_free_spaces LIMIT 1 WHERE id = $1`;
+    const query = `SELECT * FROM templates_free_spaces WHERE id = $1 LIMIT 1`;
     const result = await this.pool.query(query, [id]);
 
     if (result.rowCount === 0) throw new ReferenceError(`Free space with id ${id} does not exist`);

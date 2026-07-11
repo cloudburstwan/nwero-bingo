@@ -65,7 +65,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
   api.put("/", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("name", req.body.name, "string");
-    checkType("description", req.body.description, "string", true);
+    checkType("description", req.body.description, "string", { canBeNull: true });
     checkType("date", req.body.date, "date");
     checkType("width", req.body.width, "number");
     checkType("height", req.body.height, "number");
@@ -98,11 +98,11 @@ export function CardsAPI(database: Database, sessions: Sessions) {
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
-    checkType("name", req.body.name, "string", true);
-    checkType("description", req.body.description, "string", true);
-    checkType("date", req.body.date, "date", true);
-    checkType("width", req.body.width, "number", true);
-    checkType("height", req.body.height, "number", true);
+    checkType("name", req.body.name, "string", { canBeUndefined: true });
+    checkType("description", req.body.description, "string", { canBeUndefined: true, canBeNull: true });
+    checkType("date", req.body.date, "date", { canBeUndefined: true });
+    checkType("width", req.body.width, "number", { canBeUndefined: true });
+    checkType("height", req.body.height, "number", { canBeUndefined: true });
     completeBatch();
 
     try {

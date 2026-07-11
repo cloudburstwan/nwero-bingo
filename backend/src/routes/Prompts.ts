@@ -30,7 +30,7 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
     let { checkType, completeBatch } = batchCheckType();
     checkType("bucketId", req.body.bucketId, "string");
     checkType("prompt", req.body.prompt, "string");
-    checkType("description", req.body.description, "string", true);
+    checkType("description", req.body.description, "string", { canBeNull: true });
     completeBatch();
 
     try {
@@ -57,8 +57,8 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
-    checkType("prompt", req.body.prompt, "string", true);
-    checkType("description", req.body.description, "string", true);
+    checkType("prompt", req.body.prompt, "string", { canBeUndefined: true });
+    checkType("description", req.body.description, "string", { canBeUndefined: true, canBeNull: true  });
     completeBatch();
 
     try {

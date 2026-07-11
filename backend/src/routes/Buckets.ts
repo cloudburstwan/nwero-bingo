@@ -69,8 +69,8 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
-    checkType("name", req.body.name, "string", true);
-    checkType("weight", req.body.weight, "number", true);
+    checkType("name", req.body.name, "string", { canBeUndefined: true });
+    checkType("weight", req.body.weight, "number", { canBeUndefined: true });
     completeBatch();
 
     try {

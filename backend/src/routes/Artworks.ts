@@ -45,7 +45,7 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
     checkType("file.path", req.files?.file?.path, "string");
     checkType("file.type", req.files?.file?.type, "string");
     checkType("sourceName", req.body.sourceName, "string");
-    checkType("sourceUrl", req.body.sourceUrl, "string", true);
+    checkType("sourceUrl", req.body.sourceUrl, "string", { canBeNull: true });
     completeBatch();
 
     if (!req.files?.file?.type.startsWith("image/"))
@@ -72,8 +72,8 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
 
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
-    checkType("sourceName", req.body.sourceName, "string", true);
-    checkType("sourceUrl", req.body.sourceUrl, "string", true);
+    checkType("sourceName", req.body.sourceName, "string", { canBeUndefined: true });
+    checkType("sourceUrl", req.body.sourceUrl, "string", { canBeUndefined: true, canBeNull: true });
     completeBatch();
 
     try {
