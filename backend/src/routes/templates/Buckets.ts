@@ -19,7 +19,7 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
 
   api.get("/:id", requireSessionMiddleware(sessions), async (req, res) => {
     try {
-      let card = await database.getBucket(req.params.id as string);
+      let card = await database.templates.getBucket(req.params.id as string);
       console.log(card);
       res.status(200).json({
         id: card.id,
