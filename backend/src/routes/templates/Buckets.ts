@@ -27,6 +27,7 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
         name: card.name,
         cardId: card.cardId,
         weight: card.weight,
+        standalone: card.standalone,
         prompts: (await card.getPrompts()).map(prompt => ({
           id: prompt.id,
           prompt: prompt.prompt,
