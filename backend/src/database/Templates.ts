@@ -2,9 +2,7 @@ import { Pool } from "pg";
 import TemplateCard from "./types/templates/TemplateCard";
 import TemplateBucket from "./types/templates/TemplateBucket";
 import FreeSpace from "./types/FreeSpace";
-import Card from "./types/Card";
 import { randomUUID } from "node:crypto";
-import Bucket from "./types/Bucket";
 
 export default class TemplatesDatabase {
   private readonly pool: Pool

@@ -4,8 +4,6 @@ import Sessions from "../sessions";
 import APIError from "../types/APIError";
 import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
 import { batchCheckType } from "../utils/checkType";
-import Artwork from "../database/types/Artwork";
-import Card from "../database/types/Card";
 import { HistoryAction } from "../database/types/History";
 import FreeSpace from "../database/types/FreeSpace";
 
