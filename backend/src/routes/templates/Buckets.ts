@@ -5,6 +5,7 @@ import APIError from "../../types/APIError";
 import requireSessionMiddleware, { RequestWithSession } from "../../utils/RequireSessionMiddleware";
 import { batchCheckType } from "../../utils/checkType";
 import TemplateBucket from "../../database/types/templates/TemplateBucket";
+import { HistoryAction } from "../../database/types/History";
 
 export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -71,6 +72,14 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
       else
         bucket = await database.templates.createBucket(req.body.name, req.body.cardId, req.body.weight);
 
+      await database.addHistory(req.session!.userId, "templates_buckets", HistoryAction.CREATE, bucket.id,
+        {
+          name: bucket.name,
+          cardId: bucket.cardId,
+          weight: bucket.weight,
+          standalone: bucket.standalone,
+        });
+
       res.status(200).json({
         id: bucket.id,
         name: bucket.name,
@@ -106,6 +115,19 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
 
       await database.templates.updateBucket(bucket);
 
+      await database.addHistory(req.session!.userId, "templates_buckets", HistoryAction.UPDATE, bucket.id, {
+        before: {
+          name: bucket.name,
+          cardId: bucket.cardId,
+          weight: bucket.weight,
+        },
+        after: {
+          name: updatedRawData.name,
+          cardId: updatedRawData.cardId,
+          weight: updatedRawData.weight,
+        }
+      })
+
       res.status(200).json({
         id: bucket.id,
         name: bucket.name,
@@ -126,7 +148,11 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
   api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     try {
       let bucket = await database.templates.getBucket(req.params.id as string);
+
       await database.templates.deleteBucket(bucket);
+
+      await database.addHistory(req.session!.userId, "templates_buckets", HistoryAction.DELETE, bucket.id, null);
+
       res.status(204).send();
     } catch (err) {
       if (err instanceof ReferenceError)
