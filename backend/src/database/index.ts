@@ -51,7 +51,7 @@ export default class Database {
             let migrationName = migration.split(".")[1];
             console.log(`Applying migration ${migrationName} (created ${migration.split(".")[0]})...`);
             let migrationQuery = readFileSync(`/postgres/${migration}`, "utf8");
-            await this.pool.query(migrationQuery);
+            await client.query(migrationQuery);
             await this.addMigration(migrationName);
           }
         }
