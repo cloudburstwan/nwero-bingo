@@ -14,11 +14,11 @@ import APIError from "../types/APIError";
 export function batchCheckType() {
   let foundMismatches: any[] = [];
 
-  function addMismatch(key: string, value: any, expectedType: string, actualType: string) {
+  function addMismatch(key: string, value: any, expectedType: string, actualType: string, options: CheckTypeOptions) {
     foundMismatches.push({
       key: key,
       value: value,
-      expectedType: capitaliseFirstLetter(expectedType),
+      expectedType: `${capitaliseFirstLetter(expectedType)}${options.canBeNull ? " | null" : ""}${options.canBeUndefined ? " | undefined" : ""}`,
       actualType: actualType,
     });
   }
@@ -37,17 +37,17 @@ export function batchCheckType() {
       options = Object.assign(defaultCheckTypeOptions, options);
       if (options.canBeUndefined && value === undefined) return;
       if (options.canBeNull && value === null) return;
-      if (value === undefined) return addMismatch(key, value, type, "undefined");
-      if (value === null) return addMismatch(key, value, type, "null");
+      if (value === undefined) return addMismatch(key, value, type, "undefined", options);
+      if (value === null) return addMismatch(key, value, type, "null", options);
 
       // Custom handling for date types, as invalid dates are not caught by the constructor check
       if (type.toLowerCase() === "date" && isNaN(Date.parse(value)))
-        return addMismatch(key, value, type, "Invalid Date");
+        return addMismatch(key, value, type, "Invalid Date", options);
       else if (type.toLowerCase() === "date") return;
 
       // Main constructor name check
       if (value.constructor.name.toLowerCase() !== type.toLowerCase())
-        return addMismatch(key, value, type, value.constructor.name);
+        return addMismatch(key, value, type, value.constructor.name, options);
     },
     /**
      * Completes the batch check and throws an error if any mismatches were found.
