@@ -53,7 +53,8 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     }
 
     try {
-      await database.getArtwork(req.body.artworkId);
+      if (req.body.artworkId !== null)
+        await database.getArtwork(req.body.artworkId);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.body.artworkId}.`);
@@ -90,7 +91,8 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
     completeBatch();
 
     try {
-      await database.getArtwork(req.body.artworkId);
+      if (![null, undefined].includes(req.body.artworkId))
+        await database.getArtwork(req.body.artworkId);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.body.artworkId}.`);
