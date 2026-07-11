@@ -132,7 +132,21 @@ export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
     }
   });
 
-  // TODO: Delete card (requires session)
+  api.delete("/:id", requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
+    try {
+      let card = await database.templates.getCard(req.params.id as string);
+
+      await database.templates.deleteCard(card);
+
+      await database.addHistory(req.session!.userId, "templates_cards", HistoryAction.DELETE, card.id, null);
+
+      res.status(204).send();
+    } catch (err) {
+      if (err instanceof ReferenceError)
+        throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find a card with the id ${req.params.id}.`);
+      else throw err;
+    }
+  });
 
   return api;
 }
