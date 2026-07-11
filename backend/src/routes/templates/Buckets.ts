@@ -2,7 +2,8 @@ import express from "express";
 import Database from "../../database";
 import Sessions from "../../sessions";
 import APIError from "../../types/APIError";
-import requireSessionMiddleware from "../../utils/RequireSessionMiddleware";
+import requireSessionMiddleware, { RequestWithSession } from "../../utils/RequireSessionMiddleware";
+import { batchCheckType } from "../../utils/checkType";
 
 export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -24,12 +25,15 @@ export function TemplatesBucketsAPI(database: Database, sessions: Sessions) {
       res.status(200).json({
         id: card.id,
         name: card.name,
+        cardId: card.cardId,
         weight: card.weight,
         prompts: (await card.getPrompts()).map(prompt => ({
           id: prompt.id,
           prompt: prompt.prompt,
           description: prompt.description,
         })),
+        createdAt: card.createdAt,
+        updatedAt: card.updatedAt,
       });
     } catch (err) {
       if (err instanceof ReferenceError)
