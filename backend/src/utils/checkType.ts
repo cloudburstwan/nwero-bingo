@@ -34,20 +34,7 @@ export function batchCheckType() {
      * @param options Options for the check.
      */
     checkType: (key: string, value: any | undefined | null, type: string, options: CheckTypeOptions = defaultCheckTypeOptions) => {
-      options = Object.assign(defaultCheckTypeOptions, options);
-      if (options.canBeUndefined && value === undefined) return;
-      if (options.canBeNull && value === null) return;
-      if (value === undefined) return addMismatch(key, value, type, "undefined", options);
-      if (value === null) return addMismatch(key, value, type, "null", options);
-
-      // Custom handling for date types, as invalid dates are not caught by the constructor check
-      if (type.toLowerCase() === "date" && isNaN(Date.parse(value)))
-        return addMismatch(key, value, type, "Invalid Date", options);
-      else if (type.toLowerCase() === "date") return;
-
-      // Main constructor name check
-      if (value.constructor.name.toLowerCase() !== type.toLowerCase())
-        return addMismatch(key, value, type, value.constructor.name, options);
+      check(value, type, options, (actual: string) => addMismatch(key, value, type, actual, options));
     },
     /**
      * Completes the batch check and throws an error if any mismatches were found.
@@ -69,19 +56,20 @@ export function batchCheckType() {
  * @param key The key of the value being checked. Used for error messages.
  * @param value The value being checked.
  * @param type The expected type of the value.
+ * @param options Options for the check.
  * @throws {APIError} If the value's type does not match the expected type.
  */
-export function checkType(key: string, value: any, type: string) {
-  if (value.constructor.name.toLowerCase() !== type.toLowerCase()) {
+export function checkType(key: string, value: any, type: string, options: CheckTypeOptions = defaultCheckTypeOptions) {
+  check(value, type, options, (actual: string) => {
     let error = new APIError(400, "TYPE_MISMATCH", `The type of a value you sent did not match what was expected. See explanations.`);
     error.addExplanation({
       key: key,
       value: value,
-      expectedType: capitaliseFirstLetter(type),
-      actualType: value.constructor.name,
+      expectedType: `${capitaliseFirstLetter(type)}${options.canBeNull ? " | null" : ""}${options.canBeUndefined ? " | undefined" : ""}`,
+      actualType: actual
     });
     throw error;
-  }
+  })
 }
 
 const defaultCheckTypeOptions: CheckTypeOptions = {
@@ -92,6 +80,23 @@ const defaultCheckTypeOptions: CheckTypeOptions = {
 export interface CheckTypeOptions {
   canBeUndefined?: boolean;
   canBeNull?: boolean;
+}
+
+function check(value: any, type: string, options: CheckTypeOptions = defaultCheckTypeOptions, onFailure: (actual: string) => void) {
+  options = Object.assign(defaultCheckTypeOptions, options);
+  if (options.canBeUndefined && value === undefined) return;
+  if (options.canBeNull && value === null) return;
+  if (value === undefined) return onFailure("undefined");
+  if (value === null) return onFailure("null");
+
+  // Custom handling for date types, as invalid dates are not caught by the constructor check
+  if (type.toLowerCase() === "date" && isNaN(Date.parse(value)))
+    return onFailure("Invalid Date",);
+  else if (type.toLowerCase() === "date") return;
+
+  // Main constructor name check
+  if (value.constructor.name.toLowerCase() !== type.toLowerCase())
+    return onFailure(value.constructor.name);
 }
 
 function capitaliseFirstLetter(string: string) { return string.charAt(0).toUpperCase() + string.slice(1); }
