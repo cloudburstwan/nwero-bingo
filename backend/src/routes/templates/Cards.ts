@@ -79,7 +79,6 @@ export function TemplatesCardsAPI(database: Database, sessions: Sessions) {
     });
   });
 
-  // TODO: Update card (requires session)
   api.patch("/:id", express.json(), requireSessionMiddleware(sessions), async (req: RequestWithSession, res) => {
     let { checkType, completeBatch } = batchCheckType();
     checkType("name", req.body.name, "string", { canBeUndefined: true });
