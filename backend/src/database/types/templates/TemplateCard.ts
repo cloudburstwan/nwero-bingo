@@ -21,25 +21,25 @@ export default class TemplateCard {
     this.updatedAt = updatedAt;
   }
 
-  public async getBucketIds(): Promise<{ id: string, name: string }[]> {
-    const query = `SELECT id, name FROM templates_buckets WHERE card_id = $1 AND standalone = false`;
+  public async getBucketIds(): Promise<string[]> {
+    const query = `SELECT id FROM templates_buckets WHERE card_id = $1 AND standalone = false`;
     const result = await this.pool.query(query, [this.id]);
 
     let output = [];
     for (let row of result.rows) {
-      output.push({ id: row.id, name: row.name })
+      output.push(row.id)
     }
 
     return output;
   }
 
-  public async getFreeSpaceIds(): Promise<{ id: string, name: string }[]> {
-    const query = `SELECT id, name FROM templates_free_spaces WHERE card_id = $1`;
+  public async getFreeSpaceIds(): Promise<string[]> {
+    const query = `SELECT id FROM templates_free_spaces WHERE card_id = $1`;
     const result = await this.pool.query(query, [this.id]);
 
     let output = [];
     for (let row of result.rows) {
-      output.push({ id: row.id, name: row.name })
+      output.push(row.id)
     }
 
     return output;
