@@ -247,8 +247,8 @@ export default class Database {
    * @param offset Offset of the cards to return.
    */
   public async getCardList(limit: number = 20, offset: number = 0): Promise<{ id: string, name: string, date: Date }[]> {
-    const query = `SELECT id, name, date FROM cards ORDER BY date DESC`;
-    const result = await this.pool.query(query);
+    const query = `SELECT id, name, date FROM cards ORDER BY date DESC LIMIT $1 OFFSET $2`;
+    const result = await this.pool.query(query, [limit, offset]);
 
     let output = [];
     for (const row of result.rows) {
