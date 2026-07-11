@@ -107,7 +107,7 @@ export function CardsAPI(database: Database, sessions: Sessions) {
 
     try {
       let card = await database.getCard(req.params.id as string);
-
+      let oldCard = Object.freeze({...card});
       let updatedRawData: Card = Object.assign(card, req.body);
 
       card.name = updatedRawData.name;
@@ -120,18 +120,18 @@ export function CardsAPI(database: Database, sessions: Sessions) {
 
       await database.addHistory(req.session!.userId, "card", HistoryAction.UPDATE, card.id, {
         before: {
+          name: oldCard.name,
+          description: oldCard.description,
+          date: oldCard.date,
+          width: oldCard.width,
+          height: oldCard.height,
+        },
+        after: {
           name: card.name,
           description: card.description,
           date: card.date,
           width: card.width,
           height: card.height,
-        },
-        after: {
-          name: updatedCard.name,
-          description: updatedCard.description,
-          date: updatedCard.date,
-          width: updatedCard.width,
-          height: updatedCard.height,
         }
       });
 

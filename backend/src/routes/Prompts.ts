@@ -63,6 +63,7 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
 
     try {
       let prompt = await database.getPrompt(req.params.id as string);
+      let oldPrompt = Object.freeze({...prompt});
       let updatedRawData: Prompt = Object.assign(prompt, req.body);
 
       prompt.prompt = updatedRawData.prompt;
@@ -72,14 +73,14 @@ export function PromptsAPI(database: Database, sessions: Sessions) {
 
       await database.addHistory(req.session!.userId, "prompts", HistoryAction.UPDATE, prompt.id, {
         before: {
+          bucketId: oldPrompt.bucketId,
+          prompt: oldPrompt.prompt,
+          description: oldPrompt.description,
+        },
+        after: {
           bucketId: prompt.bucketId,
           prompt: prompt.prompt,
           description: prompt.description,
-        },
-        after: {
-          bucketId: updatedRawData.bucketId,
-          prompt: updatedRawData.prompt,
-          description: updatedRawData.description,
         }
       })
 

@@ -75,7 +75,7 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
 
     try {
       let bucket = await database.getBucket(req.params.id as string);
-
+      let oldBucket = Object.freeze({...bucket});
       let updatedRawData: Bucket = Object.assign(bucket, req.body);
 
       bucket.name = updatedRawData.name;
@@ -85,14 +85,14 @@ export function BucketsAPI(database: Database, sessions: Sessions) {
 
       await database.addHistory(req.session!.userId, "buckets", HistoryAction.UPDATE, bucket.id, {
         before: {
+          name: oldBucket.name,
+          cardId: oldBucket.cardId,
+          weight: oldBucket.weight,
+        },
+        after: {
           name: bucket.name,
           cardId: bucket.cardId,
           weight: bucket.weight,
-        },
-        after: {
-          name: updatedRawData.name,
-          cardId: updatedRawData.cardId,
-          weight: updatedRawData.weight,
         }
       })
 

@@ -78,7 +78,7 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
 
     try {
       let artwork = await database.getArtwork(req.params.id as string);
-
+      let oldArtwork = Object.freeze({...artwork});
       let updatedRawData: Artwork = Object.assign(artwork, req.body);
 
       artwork.sourceName = updatedRawData.sourceName;
@@ -88,18 +88,18 @@ export function ArtworksAPI(database: Database, sessions: Sessions) {
 
       await database.addHistory(req.session!.userId, "artworks", HistoryAction.UPDATE, artwork.id, {
         before: {
+          sourceName: oldArtwork.sourceName,
+          sourceUrl: oldArtwork.sourceUrl,
+          src: oldArtwork.src,
+        },
+        after: {
           sourceName: artwork.sourceName,
           sourceUrl: artwork.sourceUrl,
           src: artwork.src,
         },
-        after: {
-          sourceName: updatedArtwork.sourceName,
-          sourceUrl: updatedArtwork.sourceUrl,
-          src: updatedArtwork.src,
-        },
       });
 
-      res.status(200).json(updatedArtwork);
+      res.status(200).json(artwork);
     } catch (err) {
       if (err instanceof ReferenceError)
         throw new APIError(404, "ENTITY_NOT_FOUND", `Could not find an artwork with the id ${req.params.id}.`);

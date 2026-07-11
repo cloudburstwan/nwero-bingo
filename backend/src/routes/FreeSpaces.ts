@@ -93,7 +93,7 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
 
     try {
       let freeSpace = await database.getFreeSpace(req.params.id as string);
-
+      let oldFreeSpace = Object.freeze({...freeSpace});
       let updatedRawData: FreeSpace = Object.assign(freeSpace, req.body);
 
       freeSpace.artworkId = updatedRawData.artworkId;
@@ -105,18 +105,18 @@ export function FreeSpacesAPI(database: Database, sessions: Sessions) {
 
       await database.addHistory(req.session!.userId, "free_spaces", HistoryAction.UPDATE, freeSpace.id, {
         before: {
+          cardId: oldFreeSpace.cardId,
+          artworkId: oldFreeSpace.artworkId,
+          x: oldFreeSpace.x,
+          y: oldFreeSpace.y,
+          stretch: oldFreeSpace.stretch
+        },
+        after: {
           cardId: freeSpace.cardId,
           artworkId: freeSpace.artworkId,
           x: freeSpace.x,
           y: freeSpace.y,
           stretch: freeSpace.stretch
-        },
-        after: {
-          cardId: freeSpace.cardId,
-          artworkId: updatedRawData.artworkId,
-          x: updatedRawData.x,
-          y: updatedRawData.y,
-          stretch: updatedRawData.stretch
         }
       });
 
