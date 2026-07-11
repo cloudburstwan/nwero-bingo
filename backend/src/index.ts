@@ -59,7 +59,7 @@ api.use(async (err: Error, req: express.Request, res: express.Response, next: ex
   next(err);
 });
 
-api.use(async (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+api.use(async (err: Error, req: express.Request, res: express.Response, _: express.NextFunction) => {
   console.log("aaa");
   if (err instanceof APIError) {
     res.status(err.httpCode).json({
