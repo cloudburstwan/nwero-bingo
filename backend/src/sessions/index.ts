@@ -8,7 +8,8 @@ export default class Sessions {
   }
 
   public get(sessionId: string) {
-    let index = this.sessions.findIndex(session => session.id === sessionId);
+    let index = this.sessions.findIndex(session => session.id === sessionId ||
+      Buffer.from(sessionId, "base64").toString("utf8"));
     if (index === -1) return null;
 
     if (this.sessions[index].expiresAt < new Date()) {
@@ -19,9 +20,9 @@ export default class Sessions {
     return this.sessions[index];
   }
 
-  public validate(sessionId: string | undefined) {
-    if (sessionId === undefined) return false;
-    if (!sessionId.startsWith("Bearer ")) return false;
-    return this.get(sessionId.replace("Bearer ", "")) !== null;
+  public validate(sessionIdBase64: string | undefined) {
+    if (sessionIdBase64 === undefined) return false;
+    if (!sessionIdBase64.startsWith("Bearer ")) return false;
+    return this.get(Buffer.from(sessionIdBase64.replace("Bearer ", ""), "base64").toString("utf8")) !== null;
   }
 }
