@@ -1,7 +1,13 @@
 import Session from "./Session";
 
 export default class Sessions {
-  private sessions: Session[] = [];
+  private sessions: Session[] = [
+    {
+      id: "00000000-0000-0000-0000-000000000000",
+      userId: "00000000-0000-0000-0000-000000000000",
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+    }
+  ];
 
   public create(session: Session) {
     this.sessions.push(session);
