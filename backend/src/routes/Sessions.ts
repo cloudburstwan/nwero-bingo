@@ -5,6 +5,7 @@ import APIError from "../types/APIError";
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import requireSessionMiddleware, { RequestWithSession } from "../utils/RequireSessionMiddleware";
+import { checkType } from "../utils/checkType";
 
 export function SessionsAPI(database: Database, sessions: Sessions) {
   const api = express.Router();
@@ -14,10 +15,8 @@ export function SessionsAPI(database: Database, sessions: Sessions) {
     res.status(200).json(req.session!);
   });
 
-  api.get("/create", express.urlencoded({ extended: true }), async (req, res) => {
-    let code = req.query.code as string;
-    if (!code)
-      throw new APIError(400, "MISSING_CODE_PARAMETER", "Missing code URL parameter. Cannot continue OAuth2 flow.");
+  api.put("/create", express.json(), express.urlencoded({ extended: true }), async (req, res) => {
+    checkType("code", req.body.code, "string");
 
     let tokenRequest = null;
     try {
@@ -29,7 +28,7 @@ export function SessionsAPI(database: Database, sessions: Sessions) {
         },
         body: new URLSearchParams({
           grant_type: "authorization_code",
-          code: code,
+          code: req.body.code,
           redirect_uri: `${process.env.DISCORD_REDIRECT_URI}/api/v1/sessions/create`,
         })
       }).then(async res => Object.assign(await res.json(), { httpStatus: res.status }));
@@ -124,7 +123,10 @@ export function SessionsAPI(database: Database, sessions: Sessions) {
       }
     );
 
-    res.cookie("sessionId", sessionId, { maxAge: (1000*60*60*24*7)-100 }).redirect(`${process.env.DISCORD_REDIRECT_URI}/admin`);
+    res.status(200).json({
+      sessionId: sessionId,
+      expiresIn: (1000*60*60*24*7)-100
+    });
   });
 
   return api;
