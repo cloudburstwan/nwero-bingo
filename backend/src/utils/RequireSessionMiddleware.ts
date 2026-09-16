@@ -14,8 +14,8 @@ export default function requireSessionMiddleware(sessions: Sessions) {
     if (!sessions.validate(req.header("Authorization")))
       throw new APIError(401, "UNAUTHORIZED", "You must have an active session to access this endpoint.");
 
-    let sessionId = req.header("Authorization")!.replace("Bearer ", "");
-    req.session = sessions.get(sessionId)!;
+    let sessionIdBase64 = req.header("Authorization")!.replace("Bearer ", "");
+    req.session = sessions.get(Buffer.from(sessionIdBase64, "base64").toString("utf8"))!;
 
     next();
   }

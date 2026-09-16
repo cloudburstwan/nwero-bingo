@@ -8,8 +8,7 @@ export default class Sessions {
   }
 
   public get(sessionId: string) {
-    let index = this.sessions.findIndex(session => session.id === sessionId ||
-      Buffer.from(sessionId, "base64").toString("utf8"));
+    let index = this.sessions.findIndex(session => session.id === sessionId);
     if (index === -1) return null;
 
     if (this.sessions[index].expiresAt < new Date()) {
