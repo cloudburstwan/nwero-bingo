@@ -18,8 +18,10 @@ export function batchCheckType() {
     foundMismatches.push({
       key: key,
       value: value,
-      expectedType: `${capitaliseFirstLetter(expectedType)}${options.canBeNull ? " | null" : ""}${options.canBeUndefined ? " | undefined" : ""}`,
-      actualType: actualType,
+      type: {
+        expected: `${capitaliseFirstLetter(expectedType)}${options.canBeNull ? " | null" : ""}${options.canBeUndefined ? " | undefined" : ""}`,
+        actual: actualType,
+      }
     });
   }
 
@@ -65,8 +67,10 @@ export function checkType(key: string, value: any, type: string, options: CheckT
     error.addExplanation({
       key: key,
       value: value,
-      expectedType: `${capitaliseFirstLetter(type)}${options.canBeNull ? " | null" : ""}${options.canBeUndefined ? " | undefined" : ""}`,
-      actualType: actual
+      type: {
+        expected: `${capitaliseFirstLetter(type)}${options.canBeNull ? " | null" : ""}${options.canBeUndefined ? " | undefined" : ""}`,
+        actual: actual,
+      }
     });
     throw error;
   })
